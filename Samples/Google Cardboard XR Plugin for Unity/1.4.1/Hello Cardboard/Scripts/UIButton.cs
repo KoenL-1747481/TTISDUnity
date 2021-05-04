@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
-
+using UnityEngine.Events;
 public class UIButton : MonoBehaviour
 {
+    [SerializeField] private UnityEvent<string> clickResult = null;
     [SerializeField] private TextMeshProUGUI t;
     private Color startColor;
     private bool entered = false;
@@ -32,7 +33,7 @@ public class UIButton : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && entered)
         {
-
+            clickResult?.Invoke(name);
         }
     }
 }
