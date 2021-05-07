@@ -5,8 +5,8 @@ using UnityEngine;
 public class InstrumentSelect : MonoBehaviour
 {
     [SerializeField] private List<GameObject> instrumentModels;
-    [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
 
+    private List<Transform> spawnPoints = new List<Transform>();
     private List<GameObject> spawnPointCameras = new List<GameObject>();
 
     [SerializeField] private GameObject playerModel;
@@ -15,26 +15,29 @@ public class InstrumentSelect : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        foreach (Transform spawnPoint in spawnPoints)
+        foreach (Transform child in transform)
         {
-            spawnPointCameras.Add(spawnPoint.Find("Camera").gameObject);
+            spawnPoints.Add(child);
+            spawnPointCameras.Add(child.Find("Camera").gameObject);
             spawnPointCameras[spawnPointCameras.Count - 1].SetActive(false);
         }
     }
 
-    
-    public void chooseInstrument(string name)
+
+    public void spawnPlayer(int playerIndex, string instrumentName)
     {
         foreach (GameObject model in instrumentModels)
         {
-            if (model.name == name)
+            if (model.name == instrumentName)
             {
+                Vector3 playerPos = spawnPoints[playerIndex].position;
+                playerPos -= spawnPoints[playerIndex].forward*0.3f;
                 Instantiate(model, spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
+                Instantiate(playerModel, playerPos, spawnPoints[playerIndex].rotation);
                 Camera.main.gameObject.SetActive(false);
                 spawnPointCameras[playerIndex].SetActive(true);
                 break;
             }
         }
-        playerIndex++;
     }
 }
