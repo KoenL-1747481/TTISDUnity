@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Network;
-//using Network.Enums;
+using Network.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 public class NetworkClient : MonoBehaviour
 {
-    /*[SerializeField] private InstrumentSelect instrumentSelector;
+    [SerializeField] private InstrumentSelect instrumentSelector;
 
     private readonly string SERVER_IP = "127.0.0.1";
     private readonly int SERVER_PORT = 25566;
@@ -25,9 +25,9 @@ public class NetworkClient : MonoBehaviour
     private bool listening;
     private object peer_lock = new object();
 
-    List<CardboardClientInfo> peerInfoList = new List<CardboardClientInfo>();*/
+    List<CardboardClientInfo> peerInfoList = new List<CardboardClientInfo>();
 
-   /* public void Start()
+    public void Start()
     {
         ConnectionResult res = new ConnectionResult();
         clientServer =  ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
@@ -41,7 +41,7 @@ public class NetworkClient : MonoBehaviour
 
         /*clientServer?.Shutdown(CloseReason.ClientClosed);
         clientServer?.Dispose();*/
-    /*}
+    }
 
     public void sendInstrumentToServer(string instrumentName)
     {
@@ -49,7 +49,7 @@ public class NetworkClient : MonoBehaviour
       
     }
 
-    /*private void ConnectionEstablished(Connection connection, ConnectionType type)
+    private void ConnectionEstablished(Connection connection, ConnectionType type)
     {
         print("Connection established with server.");
         connection.KeepAlive = true;
@@ -74,5 +74,5 @@ public class NetworkClient : MonoBehaviour
     void Update()
     {
         
-    }*/
+    }
 }
