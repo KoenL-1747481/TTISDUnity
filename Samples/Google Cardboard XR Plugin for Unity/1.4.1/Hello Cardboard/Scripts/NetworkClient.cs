@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Network;
-using Network.Enums;
+//using Network.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,44 +15,50 @@ using System.Threading.Tasks;
 
 public class NetworkClient : MonoBehaviour
 {
-    [SerializeField] private InstrumentSelect instrumentSelector;
+    /*[SerializeField] private InstrumentSelect instrumentSelector;
 
-    private readonly string SERVER_IP = "141.135.129.110";
+    private readonly string SERVER_IP = "127.0.0.1";
     private readonly int SERVER_PORT = 25566;
-    private readonly int P2P_PORT = 25565;
 
-    private ClientConnectionContainer clientServer; // Client-server connection
+    private TcpConnection clientServer; // Client-server connection
 
     private bool listening;
     private object peer_lock = new object();
 
-    List<PeerInfo> peerInfoList = new List<PeerInfo>();
+    List<CardboardClientInfo> peerInfoList = new List<CardboardClientInfo>();*/
 
-    public NetworkClient()
+   /* public void Start()
     {
-        clientServer = ConnectionFactory.CreateClientConnectionContainer(SERVER_IP, SERVER_PORT);
-        clientServer.ConnectionEstablished += ConnectionEstablished;
-        listening = true;
+        ConnectionResult res = new ConnectionResult();
+        clientServer =  ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
+        clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
+        clientServer.KeepAlive = true;
     }
+
+    public void OnApplicationQuit()
+    {
+        clientServer?.Close(CloseReason.ClientClosed);
+
+        /*clientServer?.Shutdown(CloseReason.ClientClosed);
+        clientServer?.Dispose();*/
+    /*}
 
     public void sendInstrumentToServer(string instrumentName)
     {
         clientServer.Send(new InstrumentName(instrumentName));
-        /*PeerInfo data = new PeerInfo("kaas", "Keyboard");
-        peerInfoList.Add(data);
-        instrumentSelector.spawnPlayer(peerInfoList.Count - 1, data.instrument);*/
+      
     }
 
-    private void ConnectionEstablished(Connection connection, ConnectionType type)
+    /*private void ConnectionEstablished(Connection connection, ConnectionType type)
     {
-        Console.WriteLine($"{type} Connection established with server.");
+        print("Connection established with server.");
         connection.KeepAlive = true;
 
         // Register packet handlers
-        connection.RegisterPacketHandler<PeerInfo>(PeerInfoReceived, this);
+        connection.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
     }
 
-    private void PeerInfoReceived(PeerInfo data, Connection connection)
+    private void PeerInfoReceived(CardboardClientInfo data, Connection connection)
     {
         Console.WriteLine("Received peer info from server!");
         Console.WriteLine(data.ip+" "+data.instrument);
@@ -64,15 +70,9 @@ public class NetworkClient : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
         
-    }
+    }*/
 }
