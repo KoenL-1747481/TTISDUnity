@@ -74,7 +74,7 @@ class Server: MonoBehaviour
     {
         print("received instrument");
         Console.WriteLine("Received instrument info from client!@@@@@@@@@@@@@@");
-
+        print(data.name);
         lock (cardboardClient_lock)
         {
             cardboardConnections.Add(connection);

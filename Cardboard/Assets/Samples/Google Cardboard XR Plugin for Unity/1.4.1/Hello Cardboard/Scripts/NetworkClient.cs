@@ -17,7 +17,7 @@ public class NetworkClient : MonoBehaviour
 {
     [SerializeField] private InstrumentSelect instrumentSelector;
 
-    private readonly string SERVER_IP = "127.0.0.1";
+    private readonly string SERVER_IP = "192.168.0.68";
     private readonly int SERVER_PORT = 25566;
 
     private TcpConnection clientServer; // Client-server connection
@@ -30,25 +30,25 @@ public class NetworkClient : MonoBehaviour
     public void Start()
     {
         ConnectionResult res = new ConnectionResult();
-        clientServer =  ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
-        clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
-        clientServer.KeepAlive = true;
+
+        clientServer = ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
+        if (res == ConnectionResult.Connected)
+        {
+            clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
+            clientServer.KeepAlive = true;
+        }
     }
+
 
     public void OnApplicationQuit()
     {
         clientServer?.Close(CloseReason.ClientClosed);
-
-        /*clientServer?.Shutdown(CloseReason.ClientClosed);
-        clientServer?.Dispose();*/
     }
 
     public void sendInstrumentToServer(string instrumentName)
     {
-        print("send "+instrumentName);
-        InstrumentName t = new InstrumentName(2);
-        clientServer.Send(t);
-      
+        print("send " + instrumentName);
+        clientServer.Send(new InstrumentName(instrumentName));
     }
 
     private void ConnectionEstablished(Connection connection, ConnectionType type)
@@ -64,18 +64,18 @@ public class NetworkClient : MonoBehaviour
     {
         print("Received peer info from server!");
         Console.WriteLine("Received peer info from server!");
-        Console.WriteLine(data.ip+" "+data.instrument);
+        Console.WriteLine(data.ip + " " + data.instrument);
 
         lock (peer_lock)
         {
             peerInfoList.Add(data);
-            instrumentSelector.spawnPlayer(peerInfoList.Count - 1, data.instrument);
+            instrumentSelector.addNewPlayer(peerInfoList.Count - 1, data.instrument);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

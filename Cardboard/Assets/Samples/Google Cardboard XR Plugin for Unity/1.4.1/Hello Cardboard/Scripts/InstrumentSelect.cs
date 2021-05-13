@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class InstrumentSelect : MonoBehaviour
 {
@@ -10,8 +11,10 @@ public class InstrumentSelect : MonoBehaviour
     private List<GameObject> spawnPointCameras = new List<GameObject>();
 
     [SerializeField] private GameObject playerModel;
-    private int playerIndex = 0;
+    
+    List<string> instrumentNames = new List<string>() {"Keyboard","Acoustic Guitar","Electric Guitar"};
 
+    public Action addPlayer;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,23 +24,39 @@ public class InstrumentSelect : MonoBehaviour
             spawnPointCameras.Add(child.Find("Camera").gameObject);
             spawnPointCameras[spawnPointCameras.Count - 1].SetActive(false);
         }
+        //spawnPlayer(0, "Keyboard");
     }
 
+    public void addNewPlayer(int playerIndex, string instrumentName)
+    {
+        addPlayer = new Action(() => { spawnPlayer(playerIndex, instrumentName); });
+    }
+
+    private void Update()
+    {
+        if (addPlayer != null)
+        {
+            addPlayer();
+            addPlayer = null;
+        }
+    }
 
     public void spawnPlayer(int playerIndex, string instrumentName)
     {
-        foreach (GameObject model in instrumentModels)
+        int i = 0;
+        foreach (string model in instrumentNames)
         {
-            if (model.name == instrumentName)
+            if (model == instrumentName)
             {
                 Vector3 playerPos = spawnPoints[playerIndex].position;
                 playerPos -= spawnPoints[playerIndex].forward*0.3f;
-                Instantiate(model, spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
+                Instantiate(instrumentModels[i], spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
                 Instantiate(playerModel, playerPos, spawnPoints[playerIndex].rotation);
                 Camera.main.gameObject.SetActive(false);
                 spawnPointCameras[playerIndex].SetActive(true);
                 break;
             }
+            i++;
         }
     }
 }

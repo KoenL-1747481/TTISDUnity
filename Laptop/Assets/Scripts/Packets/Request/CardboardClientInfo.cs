@@ -14,7 +14,7 @@ public class CardboardClientInfo : RequestPacket
         this.instrument = instrument;
     }
 
-    public string ip;
-    public string instrument;
+    public string ip { get; set; }
+    public string instrument { get; set; }
 }
 

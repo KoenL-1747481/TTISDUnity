@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 public class InstrumentName : RequestPacket
 {
-    public InstrumentName(int name)
+    public InstrumentName(string name)
     {
         this.name = name;
     }
 
-    public int name;
+    public string name { get; set; }
 }
 
