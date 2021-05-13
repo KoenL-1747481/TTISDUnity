@@ -15,7 +15,7 @@ class Server: MonoBehaviour
 {
     public static readonly int MAX_PLAYERS = 4;
     private static ServerConnectionContainer server;
-    private static readonly string EXTERNAL_IP = "84.193.179.2";
+    private static readonly string EXTERNAL_IP = "94.110.227.197";
     private static readonly int PORT = 25566;
 
     /* Session settings */

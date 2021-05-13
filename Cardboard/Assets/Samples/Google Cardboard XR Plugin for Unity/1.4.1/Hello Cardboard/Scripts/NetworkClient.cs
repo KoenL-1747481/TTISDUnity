@@ -17,7 +17,7 @@ public class NetworkClient : MonoBehaviour
 {
     [SerializeField] private InstrumentSelect instrumentSelector;
 
-    private readonly string SERVER_IP = "84.193.179.2";
+    private readonly string SERVER_IP = "192.168.0.68";
     private readonly int SERVER_PORT = 25566;
 
     private TcpConnection clientServer; // Client-server connection
