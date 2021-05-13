@@ -45,7 +45,9 @@ public class NetworkClient : MonoBehaviour
 
     public void sendInstrumentToServer(string instrumentName)
     {
-        clientServer.Send(new InstrumentName(instrumentName));
+        print("send "+instrumentName);
+        InstrumentName t = new InstrumentName(2);
+        clientServer.Send(t);
       
     }
 
@@ -60,6 +62,7 @@ public class NetworkClient : MonoBehaviour
 
     private void PeerInfoReceived(CardboardClientInfo data, Connection connection)
     {
+        print("Received peer info from server!");
         Console.WriteLine("Received peer info from server!");
         Console.WriteLine(data.ip+" "+data.instrument);
 
