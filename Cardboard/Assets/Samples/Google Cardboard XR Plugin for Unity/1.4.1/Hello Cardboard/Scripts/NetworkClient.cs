@@ -27,18 +27,50 @@ public class NetworkClient : MonoBehaviour
 
     List<CardboardClientInfo> peerInfoList = new List<CardboardClientInfo>();
 
-    public void Start()
+    TcpClient client;
+
+    public async void Start()
     {
-        ConnectionResult res = new ConnectionResult();
+        client = new TcpClient();
+        await client.ConnectAsync(IPAddress.Parse(SERVER_IP), SERVER_PORT);
+        StartCoroutine(klets());
+        /*ConnectionResult res = new ConnectionResult();
 
         clientServer = ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
         if (res == ConnectionResult.Connected)
         {
             clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
             clientServer.KeepAlive = true;
-        }
+            clientServer.ConnectionClosed += ClientServer_ConnectionClosed;
+            print("Connected to keyboard");
+            sendInstrumentToServer("Keyboard");
+            //StartCoroutine(diggema());
+        }*/
+        
     }
 
+    public IEnumerator klets()
+    {
+        yield return new WaitForSeconds(1.0f);
+        NetworkStream stream = client.GetStream();
+        byte uw_dikke_ma = 69;
+        print("Sending data");
+        stream.WriteByte(uw_dikke_ma);
+        StartCoroutine(klets());
+    }
+
+    private void ClientServer_ConnectionClosed(CloseReason reason, Connection conn)
+    {
+        print("Connection with server closed. Reason: " + reason.ToString());
+    }
+
+    public IEnumerator diggema()
+    {
+        print("Sending instrument");
+        yield return new WaitForSeconds(1.0f);
+        sendInstrumentToServer("Keyboard");
+        StartCoroutine(diggema());
+    }
 
     public void OnApplicationQuit()
     {
@@ -48,16 +80,10 @@ public class NetworkClient : MonoBehaviour
     public void sendInstrumentToServer(string instrumentName)
     {
         print("send " + instrumentName);
-        clientServer.Send(new InstrumentName(instrumentName));
-    }
-
-    private void ConnectionEstablished(Connection connection, ConnectionType type)
-    {
-        print("Connection established with server.");
-        connection.KeepAlive = true;
-
-        // Register packet handlers
-        connection.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
+        ThreadPool.QueueUserWorkItem((object a) =>
+        {
+            clientServer.Send(new InstrumentName(instrumentName));
+        });
     }
 
     private void PeerInfoReceived(CardboardClientInfo data, Connection connection)

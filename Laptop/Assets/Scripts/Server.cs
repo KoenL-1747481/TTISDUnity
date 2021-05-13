@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Threading;
 
 class Server: MonoBehaviour
 {
@@ -25,17 +25,37 @@ class Server: MonoBehaviour
     private static List<Tuple<string, string>> cardboardConnectionInfo = new List<Tuple<string, string>>();
     private static List<Connection> cardboardConnections = new List<Connection>();
     private static object cardboardClient_lock = new object();
+
+    TcpListener listener;
+
     public void StartServer()
     {
-        Dispose();
-
+        /*Dispose();
         server = ConnectionFactory.CreateServerConnectionContainer(PORT);
         server.ConnectionEstablished += ConnectionEstablished;
         server.ConnectionLost += ConnectionLost;
         server.AllowUDPConnections = false;
+        server.Start();
+        print("listening");*/
+        listener = new TcpListener(PORT);
+        listener.Start();
+        ThreadPool.QueueUserWorkItem((object a) =>
+        {
+            TcpClient client = listener.AcceptTcpClient();
+            print("Connected!");
+            NetworkStream stream = client.GetStream();
 
-        server.StartTCPListener();
-        print("listening");
+            byte[] buffer = new byte[2048];
+            int amount_read;
+            while (true)
+            {
+                amount_read = stream.Read(buffer, 0, buffer.Length);
+                for (int i = 0; i < amount_read; i++)
+                {
+                    print(buffer[i].ToString());
+                }
+            }
+        });
     }
 
     public void Start()
@@ -52,6 +72,7 @@ class Server: MonoBehaviour
     private void ConnectionLost(Connection connection, ConnectionType type, CloseReason reason)
     {
         print("connection lost");
+        print(type.ToString() + "Connection lost, close reason: " + reason.ToString());
         Console.WriteLine($"{server.Count} {type.ToString()} Connection lost {connection.IPRemoteEndPoint.Port}. Reason {reason.ToString()}");
         if (server.Count == MAX_PLAYERS - 1)
             server.StartTCPListener();
