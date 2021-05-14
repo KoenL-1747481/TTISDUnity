@@ -11,13 +11,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Network.Logging;
+using System.IO;
 
 public class NetworkClient : MonoBehaviour
 {
     [SerializeField] private InstrumentSelect instrumentSelector;
 
-    private readonly string SERVER_IP = "84.193.179.2";
+    private readonly string SERVER_IP = "192.168.0.212";
     private readonly int SERVER_PORT = 25566;
 
     private TcpConnection clientServer; // Client-server connection
@@ -26,27 +27,41 @@ public class NetworkClient : MonoBehaviour
     private object peer_lock = new object();
 
     List<CardboardClientInfo> peerInfoList = new List<CardboardClientInfo>();
+    ClientConnectionContainer container;
 
     TcpClient client;
 
     public async void Start()
     {
-        client = new TcpClient();
+        /*client = new TcpClient();
         await client.ConnectAsync(IPAddress.Parse(SERVER_IP), SERVER_PORT);
-        StartCoroutine(klets());
-        /*ConnectionResult res = new ConnectionResult();
-
-        clientServer = ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
-        if (res == ConnectionResult.Connected)
+        StartCoroutine(klets());*/
+        Tuple<TcpConnection,ConnectionResult> res = await ConnectionFactory.CreateTcpConnectionAsync(SERVER_IP, SERVER_PORT);
+        clientServer = res.Item1;
+        print("Adding file diggema");
+        clientServer.LogIntoStream(File.OpenWrite(Application.persistentDataPath + "DIGGE_CLIENT_LOG.txt"));
+        clientServer.EnableLogging = true;
+        if (res.Item2 == ConnectionResult.Connected)    
         {
-            clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
-            clientServer.KeepAlive = true;
+            print("Connected to server!");
             clientServer.ConnectionClosed += ClientServer_ConnectionClosed;
-            print("Connected to keyboard");
-            sendInstrumentToServer("Keyboard");
+            //clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
+            //clientServer.KeepAlive = true;
+            //sendInstrumentToServer("Keyboard");
             //StartCoroutine(diggema());
-        }*/
-        
+        }
+    }
+
+    private void Container_ConnectionLost(Connection conn, ConnectionType type, CloseReason reason)
+    {
+        print("Connection with server closed. Type: " + type.ToString() + ", Reason: " + reason.ToString());
+    }
+
+    private void Container_ConnectionEstablished(Connection conn, ConnectionType type)
+    {
+        print("Connection established with server! Type: " + type.ToString());
+        conn.LogIntoStream(File.OpenWrite(Application.dataPath + "/DIGGE_CLIENT_LOG.txt"));
+        conn.EnableLogging = true;
     }
 
     public IEnumerator klets()
@@ -80,10 +95,10 @@ public class NetworkClient : MonoBehaviour
     public void sendInstrumentToServer(string instrumentName)
     {
         print("send " + instrumentName);
-        ThreadPool.QueueUserWorkItem((object a) =>
-        {
+        //ThreadPool.QueueUserWorkItem((object a) =>
+        //{
             clientServer.Send(new InstrumentName(instrumentName));
-        });
+        //});
     }
 
     private void PeerInfoReceived(CardboardClientInfo data, Connection connection)

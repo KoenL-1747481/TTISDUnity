@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
 
 class Server: MonoBehaviour
 {
@@ -31,14 +32,13 @@ class Server: MonoBehaviour
 
     public void StartServer()
     {
-        /*Dispose();
+        Dispose();
         server = ConnectionFactory.CreateServerConnectionContainer(PORT);
         server.ConnectionEstablished += ConnectionEstablished;
         server.ConnectionLost += ConnectionLost;
-        server.AllowUDPConnections = false;
-        server.Start();
-        print("listening");*/
-        listener = new TcpListener(IPAddress.Parse(LOCAL_IP), PORT);
+        server.StartTCPListener();
+        print("listening");
+        /*listener = new TcpListener(IPAddress.Parse(LOCAL_IP), PORT);
         listener.Start();
         ThreadPool.QueueUserWorkItem((object a) =>
         {
@@ -56,7 +56,7 @@ class Server: MonoBehaviour
                     print(buffer[i].ToString());
                 }
             }
-        });
+        });*/
     }
 
     public void Start()
@@ -77,19 +77,20 @@ class Server: MonoBehaviour
         Console.WriteLine($"{server.Count} {type.ToString()} Connection lost {connection.IPRemoteEndPoint.Port}. Reason {reason.ToString()}");
         if (server.Count == MAX_PLAYERS - 1)
             server.StartTCPListener();
-        UpdateP2P();
+        //UpdateP2P();
     }
 
     private void ConnectionEstablished(Connection connection, ConnectionType type)
     {
-        print("new connection");
-        Console.WriteLine($"{server.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
+        print("New connection!");
+        print($"{server.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
         if (server.Count == MAX_PLAYERS)
             server.Stop();
-        connection.KeepAlive = true;
-            
+        //connection.KeepAlive = true;
+        connection.LogIntoStream(File.OpenWrite("DIGGE_SERVER_LOG.txt"));
+        connection.EnableLogging = true;
         connection.RegisterPacketHandler<InstrumentName>(InstrumentNameReceived, this);
-        UpdateP2P();
+        //UpdateP2P();
     }
 
     private void InstrumentNameReceived(InstrumentName data, Connection connection)
