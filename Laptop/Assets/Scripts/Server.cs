@@ -15,6 +15,7 @@ class Server: MonoBehaviour
 {
     public static readonly int MAX_PLAYERS = 4;
     private static ServerConnectionContainer server;
+    private static readonly string LOCAL_IP = "192.168.0.212";
     private static readonly string EXTERNAL_IP = "84.193.179.2";
     private static readonly int PORT = 25566;
 
@@ -37,7 +38,7 @@ class Server: MonoBehaviour
         server.AllowUDPConnections = false;
         server.Start();
         print("listening");*/
-        listener = new TcpListener(PORT);
+        listener = new TcpListener(IPAddress.Parse(LOCAL_IP), PORT);
         listener.Start();
         ThreadPool.QueueUserWorkItem((object a) =>
         {
