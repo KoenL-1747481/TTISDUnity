@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-/*using Network;
-using Network.Enums;*/
+
 using System;
 using System.Linq;
 using System.Text;
+
 using NetworkCommsDotNet;
 using NetworkCommsDotNet.Connections;
+
 
 class Server: MonoBehaviour
 {
@@ -33,6 +34,7 @@ class Server: MonoBehaviour
         server = ConnectionFactory.CreateServerConnectionContainer(PORT);
         server.ConnectionEstablished += ConnectionEstablished;
         server.ConnectionLost += ConnectionLost;
+
         server.AllowUDPConnections = false;
         server.Start();
         print("listening");*/
@@ -58,6 +60,7 @@ class Server: MonoBehaviour
 
         NetworkComms.AppendGlobalIncomingPacketHandler<string>("unk", onReceive);
         Connection.StartListening(ConnectionType.TCP, new System.Net.IPEndPoint(System.Net.IPAddress.Parse(LOCAL_IP), PORT));
+
     }
 
     private void onReceive(PacketHeader packetHeader, Connection connection, string incomingObject)
@@ -90,20 +93,23 @@ class Server: MonoBehaviour
         Console.WriteLine($"{server.Count} {type.ToString()} Connection lost {connection.IPRemoteEndPoint.Port}. Reason {reason.ToString()}");
         if (server.Count == MAX_PLAYERS - 1)
             server.StartTCPListener();
-        UpdateP2P();
+        //UpdateP2P();
     }
    */
    /* private void ConnectionEstablished(Connection connection, ConnectionType type)
     {
-        print("new connection");
-        Console.WriteLine($"{server.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
+        print("New connection!");
+        print($"{server.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
         if (server.Count == MAX_PLAYERS)
             server.Stop();
-        connection.KeepAlive = true;
-            
+        //connection.KeepAlive = true;
+        connection.LogIntoStream(File.OpenWrite("DIGGE_SERVER_LOG.txt"));
+        connection.EnableLogging = true;
         connection.RegisterPacketHandler<InstrumentName>(InstrumentNameReceived, this);
+
         UpdateP2P();
     }*/
+
 
     /*private void InstrumentNameReceived(InstrumentName data, Connection connection)
     {

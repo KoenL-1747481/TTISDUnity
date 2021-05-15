@@ -13,12 +13,14 @@ using System.Threading.Tasks;
 using NetworkCommsDotNet;
 using NetworkCommsDotNet.Connections;
 using NetworkCommsDotNet.Connections.TCP;
+
 public class NetworkClient : MonoBehaviour
 {
     [SerializeField] private InstrumentSelect instrumentSelector;
 
-    private static readonly string LOCAL_IP2 = "192.168.0.68";
+    private static readonly string LOCAL_IP = "192.168.0.68";
     private readonly string SERVER_IP = "94.110.227.197";
+
     private readonly int SERVER_PORT = 25566;
 
     //private TcpConnection clientServer; // Client-server connection
@@ -26,44 +28,15 @@ public class NetworkClient : MonoBehaviour
     private bool listening;
     private object peer_lock = new object();
 
-   // List<CardboardClientInfo> peerInfoList = new List<CardboardClientInfo>();
-
     TcpClient client;
     Connection newTCPConn;
 
     public void Start()
-    {
-        /*client = new TcpClient();
-        print("kaas");
-        await client.ConnectAsync(IPAddress.Parse(SERVER_IP), SERVER_PORT);
-        print("kaasanus");
-        StartCoroutine(klets());*/
-        /*ConnectionResult res = new ConnectionResult();
-
-        clientServer = ConnectionFactory.CreateTcpConnection(SERVER_IP, SERVER_PORT, out res);
-        if (res == ConnectionResult.Connected)
-        {
-            clientServer?.RegisterPacketHandler<CardboardClientInfo>(PeerInfoReceived, this);
-            clientServer.KeepAlive = true;
-            clientServer.ConnectionClosed += ClientServer_ConnectionClosed;
-            print("Connected to keyboard");
-            sendInstrumentToServer("Keyboard");
-            //StartCoroutine(diggema());
-        }*/
-
-
-        //NetworkComms.SendObject("Message", SERVER_IP, SERVER_PORT, "kaasaas");
-        ConnectionInfo connInfo = new ConnectionInfo(LOCAL_IP2, SERVER_PORT);
+	{
+        ConnectionInfo connInfo = new ConnectionInfo(LOCAL_IP, SERVER_PORT);
         newTCPConn = TCPConnection.GetConnection(connInfo);
         newTCPConn.SendObject("unk", "diggema");
-        /*newTCPConn.AppendIncomingPacketHandler<string>("StringMessage",
-            MethodToRunForStringMessage,
-            NetworkComms.DefaultSendReceiveOptions);
-        }*/
-
-
     }
-
 
    /* public IEnumerator klets()
     {
@@ -92,13 +65,6 @@ public class NetworkClient : MonoBehaviour
     {
         clientServer?.Close(CloseReason.ClientClosed);
     }*/
-
-    public void sendInstrumentToServer(string instrumentName)
-    {
-        print("send " + instrumentName);
-        newTCPConn.SendObject("unk", instrumentName);
-        //clientServer.Send(new InstrumentName(instrumentName));
-    }
 
     /*private void PeerInfoReceived(CardboardClientInfo data, Connection connection)
     {
