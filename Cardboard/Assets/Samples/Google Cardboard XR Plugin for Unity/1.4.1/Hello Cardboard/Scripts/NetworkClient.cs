@@ -18,8 +18,10 @@ public class NetworkClient : MonoBehaviour
 {
     [SerializeField] private InstrumentSelect instrumentSelector;
 
-    private static readonly string LOCAL_IP = "192.168.0.68";
-    private readonly string SERVER_IP = "94.110.227.197";
+    private static readonly string LOCAL_IP_KOEN = "192.168.0.68";
+    private static readonly string LOCAL_IP_JEFFREY = "192.168.0.212";
+    private readonly string SERVER_IP_KOEN = "94.110.227.197";
+    private readonly string SERVER_IP_JEFFREY = "84.193.179.2";
 
     private readonly int SERVER_PORT = 25566;
 
@@ -33,7 +35,7 @@ public class NetworkClient : MonoBehaviour
 
     public void Start()
 	{
-        ConnectionInfo connInfo = new ConnectionInfo(LOCAL_IP, SERVER_PORT);
+        ConnectionInfo connInfo = new ConnectionInfo(SERVER_IP_KOEN, SERVER_PORT);
         newTCPConn = TCPConnection.GetConnection(connInfo);
         newTCPConn.SendObject("unk", "diggema");
     }

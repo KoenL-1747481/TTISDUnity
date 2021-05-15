@@ -14,8 +14,10 @@ class Server: MonoBehaviour
 {
     public static readonly int MAX_PLAYERS = 4;
    // private static ServerConnectionContainer server;
-    private static readonly string LOCAL_IP = "192.168.0.68";
-    private static readonly string EXTERNAL_IP = "94.110.227.197";
+    private static readonly string LOCAL_IP_KOEN = "192.168.0.68";
+    private static readonly string LOCAL_IP_JEFFREY = "192.168.0.212";
+    private static readonly string EXTERNAL_IP_KOEN = "94.110.227.197";
+    private readonly string EXTERNAL_IP_JEFFREY = "84.193.179.2";
     private static readonly int PORT = 25566;
 
     /* Session settings */
@@ -59,7 +61,7 @@ class Server: MonoBehaviour
          });*/
 
         NetworkComms.AppendGlobalIncomingPacketHandler<string>("unk", onReceive);
-        Connection.StartListening(ConnectionType.TCP, new System.Net.IPEndPoint(System.Net.IPAddress.Parse(LOCAL_IP), PORT));
+        Connection.StartListening(ConnectionType.TCP, new System.Net.IPEndPoint(System.Net.IPAddress.Parse(LOCAL_IP_JEFFREY), PORT));
 
     }
 
