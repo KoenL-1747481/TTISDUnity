@@ -1,22 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Network;
-using Network.Enums;
+/*using Network;
+using Network.Enums;*/
 using System;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
+using NetworkCommsDotNet;
+using NetworkCommsDotNet.Connections;
 
 class Server: MonoBehaviour
 {
     public static readonly int MAX_PLAYERS = 4;
-    private static ServerConnectionContainer server;
-    private static readonly string LOCAL_IP = "192.168.0.212";
-    private static readonly string EXTERNAL_IP = "84.193.179.2";
+   // private static ServerConnectionContainer server;
+    private static readonly string LOCAL_IP = "192.168.0.68";
+    private static readonly string EXTERNAL_IP = "94.110.227.197";
     private static readonly int PORT = 25566;
 
     /* Session settings */
@@ -24,10 +22,10 @@ class Server: MonoBehaviour
     private static int Bars = 4;
 
     private static List<Tuple<string, string>> cardboardConnectionInfo = new List<Tuple<string, string>>();
-    private static List<Connection> cardboardConnections = new List<Connection>();
+    //private static List<Connection> cardboardConnections = new List<Connection>();
     private static object cardboardClient_lock = new object();
 
-    TcpListener listener;
+    //TcpListener listener;
 
     public void StartServer()
     {
@@ -38,39 +36,54 @@ class Server: MonoBehaviour
         server.AllowUDPConnections = false;
         server.Start();
         print("listening");*/
-        listener = new TcpListener(IPAddress.Parse(LOCAL_IP), PORT);
-        listener.Start();
-        ThreadPool.QueueUserWorkItem((object a) =>
-        {
-            TcpClient client = listener.AcceptTcpClient();
-            print("Connected!");
-            NetworkStream stream = client.GetStream();
+        /* listener = new TcpListener(IPAddress.Parse(LOCAL_IP), PORT);
+         listener.Start();
+         ThreadPool.QueueUserWorkItem((object a) =>
+         {
+             TcpClient client = listener.AcceptTcpClient();
+             print("Connected!");
+             NetworkStream stream = client.GetStream();
 
-            byte[] buffer = new byte[2048];
-            int amount_read;
-            while (true)
-            {
-                amount_read = stream.Read(buffer, 0, buffer.Length);
-                for (int i = 0; i < amount_read; i++)
-                {
-                    print(buffer[i].ToString());
-                }
-            }
-        });
+             byte[] buffer = new byte[2048];
+             int amount_read;
+             while (true)
+             {
+                 amount_read = stream.Read(buffer, 0, buffer.Length);
+                 for (int i = 0; i < amount_read; i++)
+                 {
+                     print(buffer[i].ToString());
+                 }
+             }
+         });*/
+
+        NetworkComms.AppendGlobalIncomingPacketHandler<string>("unk", onReceive);
+        Connection.StartListening(ConnectionType.TCP, new System.Net.IPEndPoint(System.Net.IPAddress.Parse(LOCAL_IP), PORT));
     }
+
+    private void onReceive(PacketHeader packetHeader, Connection connection, string incomingObject)
+    {
+        print(incomingObject);
+    }
+
+    
 
     public void Start()
     {
         StartServer();
     }
 
-    public void Dispose()
+    private void OnDestroy()
+    {
+        NetworkComms.Shutdown();
+    }
+
+    /*public void Dispose()
     {
         server?.Stop();
         server?.CloseConnections(CloseReason.ServerClosed);
-    }
+    }*/
 
-    private void ConnectionLost(Connection connection, ConnectionType type, CloseReason reason)
+   /* private void ConnectionLost(Connection connection, ConnectionType type, CloseReason reason)
     {
         print("connection lost");
         print(type.ToString() + "Connection lost, close reason: " + reason.ToString());
@@ -79,8 +92,8 @@ class Server: MonoBehaviour
             server.StartTCPListener();
         UpdateP2P();
     }
-
-    private void ConnectionEstablished(Connection connection, ConnectionType type)
+   */
+   /* private void ConnectionEstablished(Connection connection, ConnectionType type)
     {
         print("new connection");
         Console.WriteLine($"{server.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
@@ -90,9 +103,9 @@ class Server: MonoBehaviour
             
         connection.RegisterPacketHandler<InstrumentName>(InstrumentNameReceived, this);
         UpdateP2P();
-    }
+    }*/
 
-    private void InstrumentNameReceived(InstrumentName data, Connection connection)
+    /*private void InstrumentNameReceived(InstrumentName data, Connection connection)
     {
         print("received instrument");
         Console.WriteLine("Received instrument info from client!@@@@@@@@@@@@@@");
@@ -103,9 +116,9 @@ class Server: MonoBehaviour
             cardboardConnectionInfo.Add(new Tuple<string, string>(connection.IPRemoteEndPoint.ToString(),data.name.ToString()));
             updateCardBoardClients();
         }
-    }
+    }*/
 
-    private void updateCardBoardClients()
+   /* private void updateCardBoardClients()
     {
         //send the new client's data to all older clients
         for (int i=0;i< cardboardConnectionInfo.Count-1;i++)
@@ -117,9 +130,9 @@ class Server: MonoBehaviour
         {
             cardboardConnections[cardboardConnectionInfo.Count - 1].Send(new CardboardClientInfo(cardboardConnectionInfo[i].Item1, cardboardConnectionInfo[i].Item2));
         }
-    }
+    }*/
 
-    private void UpdateP2P()
+   /* private void UpdateP2P()
     {
         // Get all connected clients
         var connections = server.TCP_Connections;
@@ -149,6 +162,6 @@ class Server: MonoBehaviour
             }
             //conn.Send(new P2PInfo(ip_addresses_to_send));
         }
-    }
+    }*/
 } 
 

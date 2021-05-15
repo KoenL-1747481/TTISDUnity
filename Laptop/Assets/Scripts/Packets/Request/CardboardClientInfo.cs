@@ -1,4 +1,4 @@
-﻿using Network.Packets;
+﻿/*using Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,4 +17,4 @@ public class CardboardClientInfo : RequestPacket
     public string ip { get; set; }
     public string instrument { get; set; }
 }
-
+*/

@@ -1,4 +1,4 @@
-﻿using Network.Attributes;
+﻿/*using Network.Attributes;
 using Network.Packets;
 using System;
 using System.Collections.Generic;
@@ -18,4 +18,4 @@ namespace TTISDProject
 
         public bool OK { get; set; }
     }
-}
+}*/

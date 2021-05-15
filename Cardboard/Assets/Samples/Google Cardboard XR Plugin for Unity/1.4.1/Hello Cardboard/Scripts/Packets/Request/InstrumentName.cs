@@ -1,4 +1,4 @@
-﻿using Network.Packets;
+﻿/*using Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +14,5 @@ public class InstrumentName : RequestPacket
     }
 
     public string name { get; set; }
-}
+}*/
 

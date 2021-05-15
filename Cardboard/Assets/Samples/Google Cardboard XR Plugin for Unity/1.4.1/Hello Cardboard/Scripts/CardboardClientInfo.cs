@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Network.Packets;
@@ -18,3 +18,4 @@ public class CardboardClientInfo : RequestPacket
     public string ip { get; set; }
     public string instrument { get; set; }
 }
+*/

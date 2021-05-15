@@ -1,4 +1,4 @@
-﻿using Network.Packets;
+﻿/*using Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,3 +17,4 @@ namespace TTISDProject
         public List<string> Peers { get; set; }
     }
 }
+*/
