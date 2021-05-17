@@ -12,7 +12,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 
-class Server: MonoBehaviour
+class Server_Old: MonoBehaviour
 {
     public static readonly int MAX_PLAYERS = 4;
    // private static ServerConnectionContainer server;
