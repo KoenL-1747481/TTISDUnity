@@ -8,7 +8,9 @@ using System.Text;
 
 using NetworkCommsDotNet;
 using NetworkCommsDotNet.Connections;
-
+using System.Net.Sockets;
+using System.Net;
+using System.Threading;
 
 class Server: MonoBehaviour
 {
@@ -28,7 +30,7 @@ class Server: MonoBehaviour
     //private static List<Connection> cardboardConnections = new List<Connection>();
     private static object cardboardClient_lock = new object();
 
-    //TcpListener listener;
+    TcpListener listener;
 
     public void StartServer()
     {
@@ -40,28 +42,29 @@ class Server: MonoBehaviour
         server.AllowUDPConnections = false;
         server.Start();
         print("listening");*/
-        /* listener = new TcpListener(IPAddress.Parse(LOCAL_IP), PORT);
-         listener.Start();
-         ThreadPool.QueueUserWorkItem((object a) =>
-         {
-             TcpClient client = listener.AcceptTcpClient();
-             print("Connected!");
-             NetworkStream stream = client.GetStream();
+        listener = new TcpListener(IPAddress.Parse(LOCAL_IP_JEFFREY), PORT);
+        listener.Start();
+        print("Listening...");
+        ThreadPool.QueueUserWorkItem((object a) =>
+        {
+            TcpClient client = listener.AcceptTcpClient();
+            print("Connected!");
+            NetworkStream stream = client.GetStream();
 
-             byte[] buffer = new byte[2048];
-             int amount_read;
-             while (true)
-             {
-                 amount_read = stream.Read(buffer, 0, buffer.Length);
-                 for (int i = 0; i < amount_read; i++)
-                 {
-                     print(buffer[i].ToString());
-                 }
-             }
-         });*/
+            byte[] buffer = new byte[2048];
+            int amount_read;
+            while (true)
+            {
+                amount_read = stream.Read(buffer, 0, buffer.Length);
+                for (int i = 0; i < amount_read; i++)
+                {
+                    print(buffer[i].ToString());
+                }
+            }
+         });
 
-        NetworkComms.AppendGlobalIncomingPacketHandler<string>("unk", onReceive);
-        Connection.StartListening(ConnectionType.TCP, new System.Net.IPEndPoint(System.Net.IPAddress.Parse(LOCAL_IP_JEFFREY), PORT));
+        //NetworkComms.AppendGlobalIncomingPacketHandler<string>("unk", onReceive);
+        //Connection.StartListening(ConnectionType.TCP, new System.Net.IPEndPoint(System.Net.IPAddress.Parse(LOCAL_IP_JEFFREY), PORT));
 
     }
 
