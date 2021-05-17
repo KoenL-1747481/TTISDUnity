@@ -7,12 +7,11 @@ using UnityEngine;
 
 public class Client
 {
-    public static int dataBufferSize = 4096;
-
     public int id;
-    public Player player;
     public TCP tcp;
     public UDP udp;
+    
+    public Player player;
 
     public Client(int _clientId)
     {
@@ -40,15 +39,15 @@ public class Client
         public void Connect(TcpClient _socket)
         {
             socket = _socket;
-            socket.ReceiveBufferSize = dataBufferSize;
-            socket.SendBufferSize = dataBufferSize;
+            socket.ReceiveBufferSize = Constants.CLIENT_BUFFER_SIZE;
+            socket.SendBufferSize = Constants.CLIENT_BUFFER_SIZE;
 
             stream = socket.GetStream();
 
             receivedData = new Packet();
-            receiveBuffer = new byte[dataBufferSize];
+            receiveBuffer = new byte[Constants.CLIENT_BUFFER_SIZE];
 
-            stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+            stream.BeginRead(receiveBuffer, 0, Constants.CLIENT_BUFFER_SIZE, ReceiveCallback, null);
 
             ServerSend.Welcome(id, "Welcome to the server!");
         }
@@ -86,7 +85,7 @@ public class Client
                 Array.Copy(receiveBuffer, _data, _byteLength);
 
                 receivedData.Reset(HandleData(_data)); // Reset receivedData if all data was handled
-                stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+                stream.BeginRead(receiveBuffer, 0, Constants.CLIENT_BUFFER_SIZE, ReceiveCallback, null);
             }
             catch (Exception _ex)
             {
@@ -210,29 +209,27 @@ public class Client
 
     /// <summary>Sends the client into the game and informs other clients of the new player.</summary>
     /// <param name="_playerName">The username of the new player.</param>
-    public void SendIntoGame(string _playerName)
+    public void SendIntoGame(string _playerName, string _instrumentType = null)
     {
-        player = NetworkManager.instance.InstantiatePlayer();
-        player.Initialize(id, _playerName);
+        player = new Player(id, _playerName, ((IPEndPoint)tcp.socket.Client.RemoteEndPoint).Address.ToString(), _instrumentType);
 
-        // Send all players to the new player
-        foreach (Client _client in Server.clients.Values)
-        {
-            if (_client.player != null)
+        // Send all players (except himself) to the new player, if player is not cardboard
+        if (_instrumentType == null)
+        { // Player is not Cardboard
+            foreach (Client _client in Server.clients.Values)
             {
-                if (_client.id != id)
+                if (_client.player != null && _client.id != id)
                 {
-                    ServerSend.SpawnPlayer(id, _client.player);
+                    ServerSend.AddPlayer(id, _client.player);
                 }
             }
         }
-
-        // Send the new player to all players (including himself)
+        // Send the new player to all non-cardboard players (except himself)
         foreach (Client _client in Server.clients.Values)
         {
-            if (_client.player != null)
+            if (_client.player != null && _client.id != id && _client.player.instrumentType == null)
             {
-                ServerSend.SpawnPlayer(_client.id, player);
+                ServerSend.AddPlayer(_client.id, player);
             }
         }
     }
@@ -241,9 +238,6 @@ public class Client
     private void Disconnect()
     {
         Debug.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
-
-        UnityEngine.Object.Destroy(player.gameObject);
-        player = null;
 
         tcp.Disconnect();
         udp.Disconnect();

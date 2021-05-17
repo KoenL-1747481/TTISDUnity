@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class ServerSend
 {
+    #region GeneralSend
     /// <summary>Sends a packet to a client via TCP.</summary>
-    /// <param name="_toClient">The client to send the packet the packet to.</param>
+    /// <param name="_toClient">The client to send the packet to.</param>
     /// <param name="_packet">The packet to send to the client.</param>
     private static void SendTCPData(int _toClient, Packet _packet)
     {
@@ -14,7 +15,7 @@ public class ServerSend
     }
 
     /// <summary>Sends a packet to a client via UDP.</summary>
-    /// <param name="_toClient">The client to send the packet the packet to.</param>
+    /// <param name="_toClient">The client to send the packet to.</param>
     /// <param name="_packet">The packet to send to the client.</param>
     private static void SendUDPData(int _toClient, Packet _packet)
     {
@@ -27,7 +28,7 @@ public class ServerSend
     private static void SendTCPDataToAll(Packet _packet)
     {
         _packet.WriteLength();
-        for (int i = 1; i <= Server.MaxPlayers; i++)
+        for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
             Server.clients[i].tcp.SendData(_packet);
         }
@@ -38,7 +39,7 @@ public class ServerSend
     private static void SendTCPDataToAll(int _exceptClient, Packet _packet)
     {
         _packet.WriteLength();
-        for (int i = 1; i <= Server.MaxPlayers; i++)
+        for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
             if (i != _exceptClient)
             {
@@ -52,7 +53,7 @@ public class ServerSend
     private static void SendUDPDataToAll(Packet _packet)
     {
         _packet.WriteLength();
-        for (int i = 1; i <= Server.MaxPlayers; i++)
+        for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
             Server.clients[i].udp.SendData(_packet);
         }
@@ -63,7 +64,7 @@ public class ServerSend
     private static void SendUDPDataToAll(int _exceptClient, Packet _packet)
     {
         _packet.WriteLength();
-        for (int i = 1; i <= Server.MaxPlayers; i++)
+        for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
             if (i != _exceptClient)
             {
@@ -71,6 +72,7 @@ public class ServerSend
             }
         }
     }
+#endregion
 
     #region Packets
     /// <summary>Sends a welcome message to the given client.</summary>
@@ -87,45 +89,16 @@ public class ServerSend
         }
     }
 
-    /// <summary>Tells a client to spawn a player.</summary>
-    /// <param name="_toClient">The client that should spawn the player.</param>
-    /// <param name="_player">The player to spawn.</param>
-    public static void SpawnPlayer(int _toClient, Player _player)
+    public static void AddPlayer(int _toClient, Player player)
     {
-        using (Packet _packet = new Packet((int)ServerPackets.spawnPlayer))
+        using (Packet _packet = new Packet((int)ServerPackets.addPlayer))
         {
-            _packet.Write(_player.id);
-            _packet.Write(_player.username);
-            _packet.Write(_player.transform.position);
-            _packet.Write(_player.transform.rotation);
+            _packet.Write(player.id);
+            _packet.Write(player.username);
+            _packet.Write(player.IP);
+            _packet.Write(player.instrumentType);
 
             SendTCPData(_toClient, _packet);
-        }
-    }
-
-    /// <summary>Sends a player's updated position to all clients.</summary>
-    /// <param name="_player">The player whose position to update.</param>
-    public static void PlayerPosition(Player _player)
-    {
-        using (Packet _packet = new Packet((int)ServerPackets.playerPosition))
-        {
-            _packet.Write(_player.id);
-            _packet.Write(_player.transform.position);
-
-            SendUDPDataToAll(_packet);
-        }
-    }
-
-    /// <summary>Sends a player's updated rotation to all clients except to himself (to avoid overwriting the local player's rotation).</summary>
-    /// <param name="_player">The player whose rotation to update.</param>
-    public static void PlayerRotation(Player _player)
-    {
-        using (Packet _packet = new Packet((int)ServerPackets.playerRotation))
-        {
-            _packet.Write(_player.id);
-            _packet.Write(_player.transform.rotation);
-
-            SendUDPDataToAll(_player.id, _packet);
         }
     }
     #endregion

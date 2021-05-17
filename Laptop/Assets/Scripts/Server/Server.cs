@@ -7,8 +7,7 @@ using UnityEngine;
 
 public class Server
 {
-    public static int MaxPlayers { get; private set; }
-    public static int Port { get; private set; }
+
     public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
     public delegate void PacketHandler(int _fromClient, Packet _packet);
     public static Dictionary<int, PacketHandler> packetHandlers;
@@ -17,24 +16,19 @@ public class Server
     private static UdpClient udpListener;
 
     /// <summary>Starts the server.</summary>
-    /// <param name="_maxPlayers">The maximum players that can be connected simultaneously.</param>
-    /// <param name="_port">The port to start the server on.</param>
-    public static void Start(int _maxPlayers, int _port)
+    public static void Start()
     {
-        MaxPlayers = _maxPlayers;
-        Port = _port;
-
         Debug.Log("Starting server...");
         InitializeServerData();
 
-        tcpListener = new TcpListener(IPAddress.Any, Port);
+        tcpListener = new TcpListener(IPAddress.Any, Constants.SERVER_PORT);
         tcpListener.Start();
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
 
-        udpListener = new UdpClient(Port);
+        udpListener = new UdpClient(Constants.SERVER_PORT);
         udpListener.BeginReceive(UDPReceiveCallback, null);
 
-        Debug.Log($"Server started on port {Port}.");
+        Debug.Log($"Server started on port {Constants.SERVER_PORT}.");
     }
 
     /// <summary>Handles new TCP connections.</summary>
@@ -44,7 +38,7 @@ public class Server
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
         Debug.Log($"Incoming connection from {_client.Client.RemoteEndPoint}...");
 
-        for (int i = 1; i <= MaxPlayers; i++)
+        for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
             if (clients[i].tcp.socket == null)
             {
@@ -120,15 +114,15 @@ public class Server
     /// <summary>Initializes all necessary server data.</summary>
     private static void InitializeServerData()
     {
-        for (int i = 1; i <= MaxPlayers; i++)
+        for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
             clients.Add(i, new Client(i));
         }
 
         packetHandlers = new Dictionary<int, PacketHandler>()
             {
-                { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                { (int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
+                { (int)ClientPackets.welcomeReceivedCardboard, ServerHandle.WelcomeReceivedCardboard },
+                { (int)ClientPackets.welcomeReceivedLaptop, ServerHandle.WelcomeReceivedLaptop}
             };
         Debug.Log("Initialized packets.");
     }

@@ -15,7 +15,7 @@ namespace TTISDProject
         private static readonly WaveFormat SAMPLE_FORMAT = WaveFormat.CreateIeeeFloatWaveFormat(SAMPLE_RATE, OUTPUT_CHANNELS);
 
         private static AsioOut AsioDriver;
-        private static BufferedSampleProvider[] PlayerAudio = new BufferedSampleProvider[Server.MAX_PLAYERS];
+        private static BufferedSampleProvider[] PlayerAudio = new BufferedSampleProvider[Constants.MAX_PLAYERS];
         private static CachedSound ClickSound = new CachedSound("Assets/Audio/click.wav");
         private static MixingSampleProvider Mixer;
 
@@ -29,7 +29,7 @@ namespace TTISDProject
         // Start is called before the first frame update
         void Start()
         {
-            StartAudioHandler(AsioOut.GetDriverNames()[0]);
+            //StartAudioHandler(AsioOut.GetDriverNames()[0]);
         }
 
         // Update is called once per frame
@@ -168,7 +168,7 @@ namespace TTISDProject
 
         public static void PlayPlayerAudio(float[] audio, int count, int player_id)
         {
-            if (player_id < Server.MAX_PLAYERS && player_id >= 0)
+            if (player_id < Constants.MAX_PLAYERS && player_id >= 0)
             {
                 PlayerAudio[player_id]?.AddSamples(audio, 0, count);
             }
