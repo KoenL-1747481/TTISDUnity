@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace TTISDProject
 {
-    public class NetworkManager : MonoBehaviour
+    public class ServerManager : MonoBehaviour
     {
-        public static NetworkManager instance;
+        public static ServerManager instance;
 
         private void Awake()
         {
@@ -24,6 +24,11 @@ namespace TTISDProject
         private void Start()
         {
             Server.Start();
+        }
+
+        private void OnApplicationQuit()
+        {
+            Server.Dispose();       
         }
     }
 }

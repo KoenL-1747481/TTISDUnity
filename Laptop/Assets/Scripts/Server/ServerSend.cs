@@ -89,14 +89,26 @@ public class ServerSend
         }
     }
 
-    public static void AddPlayer(int _toClient, Player player)
+    public static void AddCardboard(int _toClient, Player player)
     {
-        using (Packet _packet = new Packet((int)ServerPackets.addPlayer))
+        using (Packet _packet = new Packet((int)ServerPackets.addCardboard))
         {
             _packet.Write(player.id);
             _packet.Write(player.username);
             _packet.Write(player.IP);
             _packet.Write(player.instrumentType);
+
+            SendTCPData(_toClient, _packet);
+        }
+    }
+
+    public static void AddLaptop(int _toClient, Player player)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.addLaptop))
+        {
+            _packet.Write(player.id);
+            _packet.Write(player.username);
+            _packet.Write(player.IP);
 
             SendTCPData(_toClient, _packet);
         }

@@ -5,43 +5,26 @@ using System.Net;
 using System.Net.Sockets;
 using System;
 
-public class Client : MonoBehaviour
+public class Client
 {
-    public static Client instance;
-    public static int dataBufferSize = 4096;
-
-    public string ip = "127.0.0.1";
-    public int port = 26950;
     public int myId = 0;
     public TCP tcp;
     public UDP udp;
+
+    public string IP;
+    public int port;
 
     private bool isConnected = false;
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
 
-    private void Awake()
+    public Client(string _IP, int _port)
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Debug.Log("Instance already exists, destroying object!");
-            Destroy(this);
-        }
-    }
+        IP = _IP;
+        port = _port;
 
-    private void Start()
-    {
-        tcp = new TCP();
-        udp = new UDP();
-    }
-
-    private void OnApplicationQuit()
-    {
-        Disconnect(); // Disconnect when the game is closed
+        tcp = new TCP(this);
+        udp = new UDP(this);
     }
 
     /// <summary>Attempts to connect to the server.</summary>
@@ -53,25 +36,55 @@ public class Client : MonoBehaviour
         tcp.Connect(); // Connect tcp, udp gets connected once tcp is done
     }
 
+    /// <summary>Initializes all necessary client data.</summary>
+    private void InitializeClientData()
+    {
+        packetHandlers = new Dictionary<int, PacketHandler>()
+        {
+            { (int)ServerPackets.welcome, ClientHandle.Welcome },
+            { (int)ServerPackets.addLaptop, ClientHandle.AddLaptop },
+            { (int)ServerPackets.addCardboard, ClientHandle.AddCardboard},
+        };
+        Debug.Log("Initialized packets.");
+    }
+
+    /// <summary>Disconnects from the server and stops all network traffic.</summary>
+    public void Disconnect()
+    {
+        if (isConnected)
+        {
+            isConnected = false;
+            tcp.socket?.Close();
+            udp.socket?.Close();
+
+            Debug.Log("Disconnected from server.");
+        }
+    }
+
     public class TCP
     {
         public TcpClient socket;
 
+        private Client instance;
         private NetworkStream stream;
         private Packet receivedData;
         private byte[] receiveBuffer;
 
+        public TCP(Client _instance)
+        {
+            instance = _instance;
+        } 
         /// <summary>Attempts to connect to the server via TCP.</summary>
         public void Connect()
         {
             socket = new TcpClient
             {
-                ReceiveBufferSize = dataBufferSize,
-                SendBufferSize = dataBufferSize
+                ReceiveBufferSize = Constants.DATA_BUFFER_SIZE,
+                SendBufferSize = Constants.DATA_BUFFER_SIZE
             };
 
-            receiveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
+            receiveBuffer = new byte[Constants.DATA_BUFFER_SIZE];
+            socket.BeginConnect(instance.IP, instance.port, ConnectCallback, socket);
         }
 
         /// <summary>Initializes the newly connected client's TCP-related info.</summary>
@@ -88,7 +101,7 @@ public class Client : MonoBehaviour
 
             receivedData = new Packet();
 
-            stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+            stream.BeginRead(receiveBuffer, 0, Constants.DATA_BUFFER_SIZE, ReceiveCallback, null);
         }
 
         /// <summary>Sends data to the client via TCP.</summary>
@@ -124,7 +137,7 @@ public class Client : MonoBehaviour
                 Array.Copy(receiveBuffer, _data, _byteLength);
 
                 receivedData.Reset(HandleData(_data)); // Reset receivedData if all data was handled
-                stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+                stream.BeginRead(receiveBuffer, 0, Constants.DATA_BUFFER_SIZE, ReceiveCallback, null);
             }
             catch
             {
@@ -202,9 +215,12 @@ public class Client : MonoBehaviour
         public UdpClient socket;
         public IPEndPoint endPoint;
 
-        public UDP()
+        private Client instance;
+
+        public UDP(Client _instance)
         {
-            endPoint = new IPEndPoint(IPAddress.Parse(instance.ip), instance.port);
+            instance = _instance;
+            endPoint = new IPEndPoint(IPAddress.Parse(instance.IP), instance.port);
         }
 
         /// <summary>Attempts to connect to the server via UDP.</summary>
@@ -289,32 +305,6 @@ public class Client : MonoBehaviour
 
             endPoint = null;
             socket = null;
-        }
-    }
-
-    /// <summary>Initializes all necessary client data.</summary>
-    private void InitializeClientData()
-    {
-        packetHandlers = new Dictionary<int, PacketHandler>()
-        {
-            { (int)ServerPackets.welcome, ClientHandle.Welcome },
-            { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
-            { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
-            { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
-        };
-        Debug.Log("Initialized packets.");
-    }
-
-    /// <summary>Disconnects from the server and stops all network traffic.</summary>
-    private void Disconnect()
-    {
-        if (isConnected)
-        {
-            isConnected = false;
-            tcp.socket.Close();
-            udp.socket.Close();
-
-            Debug.Log("Disconnected from server.");
         }
     }
 }

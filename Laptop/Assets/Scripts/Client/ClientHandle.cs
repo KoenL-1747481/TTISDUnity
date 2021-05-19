@@ -11,36 +11,33 @@ public class ClientHandle : MonoBehaviour
         int _myId = _packet.ReadInt();
 
         Debug.Log($"Message from server: {_msg}");
-        Client.instance.myId = _myId;
+        SessionManager.clientServer.myId = _myId;
         ClientSend.WelcomeReceived();
 
         // Now that we have the client's id, connect UDP
-        Client.instance.udp.Connect(((IPEndPoint)Client.instance.tcp.socket.Client.LocalEndPoint).Port);
+        SessionManager.clientServer.udp.Connect(((IPEndPoint)SessionManager.clientServer.tcp.socket.Client.LocalEndPoint).Port);
     }
 
-    public static void SpawnPlayer(Packet _packet)
+    public static void AddCardboard(Packet _packet)
     {
+        Debug.Log("Adding cardboard...");
         int _id = _packet.ReadInt();
         string _username = _packet.ReadString();
-        Vector3 _position = _packet.ReadVector3();
-        Quaternion _rotation = _packet.ReadQuaternion();
+        string _IP = _packet.ReadString();
+        string _instrumentType = _packet.ReadString();
 
-        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+
+        SessionManager.instance.AddCardboard(new Player(_id, _username, _IP, _instrumentType));
     }
 
-    public static void PlayerPosition(Packet _packet)
+    public static void AddLaptop(Packet _packet)
     {
+        Debug.Log("Adding laptop...");
+
         int _id = _packet.ReadInt();
-        Vector3 _position = _packet.ReadVector3();
+        string _username = _packet.ReadString();
+        string _IP = _packet.ReadString();
 
-        GameManager.players[_id].transform.position = _position;
-    }
-
-    public static void PlayerRotation(Packet _packet)
-    {
-        int _id = _packet.ReadInt();
-        Quaternion _rotation = _packet.ReadQuaternion();
-
-        GameManager.players[_id].transform.rotation = _rotation;
+        SessionManager.instance.AddLaptop(new Player(_id, _username, _IP));
     }
 }

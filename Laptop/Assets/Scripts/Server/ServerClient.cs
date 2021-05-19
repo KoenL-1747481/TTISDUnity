@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
-public class Client
+public class ServerClient
 {
     public int id;
     public TCP tcp;
@@ -13,7 +13,7 @@ public class Client
     
     public Player player;
 
-    public Client(int _clientId)
+    public ServerClient(int _clientId)
     {
         id = _clientId;
         tcp = new TCP(id);
@@ -39,15 +39,15 @@ public class Client
         public void Connect(TcpClient _socket)
         {
             socket = _socket;
-            socket.ReceiveBufferSize = Constants.CLIENT_BUFFER_SIZE;
-            socket.SendBufferSize = Constants.CLIENT_BUFFER_SIZE;
+            socket.ReceiveBufferSize = Constants.DATA_BUFFER_SIZE;
+            socket.SendBufferSize = Constants.DATA_BUFFER_SIZE;
 
             stream = socket.GetStream();
 
             receivedData = new Packet();
-            receiveBuffer = new byte[Constants.CLIENT_BUFFER_SIZE];
+            receiveBuffer = new byte[Constants.DATA_BUFFER_SIZE];
 
-            stream.BeginRead(receiveBuffer, 0, Constants.CLIENT_BUFFER_SIZE, ReceiveCallback, null);
+            stream.BeginRead(receiveBuffer, 0, Constants.DATA_BUFFER_SIZE, ReceiveCallback, null);
 
             ServerSend.Welcome(id, "Welcome to the server!");
         }
@@ -85,7 +85,7 @@ public class Client
                 Array.Copy(receiveBuffer, _data, _byteLength);
 
                 receivedData.Reset(HandleData(_data)); // Reset receivedData if all data was handled
-                stream.BeginRead(receiveBuffer, 0, Constants.CLIENT_BUFFER_SIZE, ReceiveCallback, null);
+                stream.BeginRead(receiveBuffer, 0, Constants.DATA_BUFFER_SIZE, ReceiveCallback, null);
             }
             catch (Exception _ex)
             {
@@ -150,7 +150,7 @@ public class Client
         /// <summary>Closes and cleans up the TCP connection.</summary>
         public void Disconnect()
         {
-            socket.Close();
+            socket?.Close();
             stream = null;
             receivedData = null;
             receiveBuffer = null;
@@ -209,37 +209,58 @@ public class Client
 
     /// <summary>Sends the client into the game and informs other clients of the new player.</summary>
     /// <param name="_playerName">The username of the new player.</param>
-    public void SendIntoGame(string _playerName, string _instrumentType = null)
+    public void SendIntoSession(string _playerName, string _instrumentType = null)
     {
-        player = new Player(id, _playerName, ((IPEndPoint)tcp.socket.Client.RemoteEndPoint).Address.ToString(), _instrumentType);
+        string player_ip = ((IPEndPoint)tcp.socket.Client.RemoteEndPoint).Address.ToString();
+        if (player_ip == "192.168.0.1" || player_ip == "127.0.0.1")
+            player_ip = Constants.SERVER_IP;
+        Debug.Log("Player IP: " + player_ip);
 
-        // Send all players (except himself) to the new player, if player is not cardboard
-        if (_instrumentType == null)
-        { // Player is not Cardboard
-            foreach (Client _client in Server.clients.Values)
+        player = new Player(id, _playerName, player_ip, _instrumentType);
+
+        // Send all players (except himself) to the new player if player is non-cardboard
+        // Send all cardboards (except himself) to the new player if player is cardboard
+        foreach (ServerClient _client in Server.clients.Values)
+        {
+            if (_client.player != null && _client.id != id)
             {
-                if (_client.player != null && _client.id != id)
-                {
-                    ServerSend.AddPlayer(id, _client.player);
+                if (_client.player.instrumentType != null) // Other player is cardboard
+                    ServerSend.AddCardboard(id, _client.player); // Always add cardboard
+                else // Other player is laptop
+                { 
+                    if (_instrumentType == null) // You are a laptop
+                        ServerSend.AddLaptop(id, _client.player); // Laptops get laptops
                 }
             }
         }
+
         // Send the new player to all non-cardboard players (except himself)
-        foreach (Client _client in Server.clients.Values)
+        // Send the new player to all cardboard players (except himself) if player is cardboard
+        foreach (ServerClient _client in Server.clients.Values)
         {
-            if (_client.player != null && _client.id != id && _client.player.instrumentType == null)
+            if (_client.player != null && _client.id != id)
             {
-                ServerSend.AddPlayer(_client.id, player);
+                if (_client.player.instrumentType == null) // Other player is laptop
+                {
+                    if (_instrumentType == null)
+                        ServerSend.AddLaptop(_client.id, player);
+                    else
+                        ServerSend.AddCardboard(_client.id, player);
+                } else // Other player is cardboard
+                {
+                    if (_instrumentType != null)
+                        ServerSend.AddCardboard(_client.id, player);
+                }
             }
         }
     }
 
     /// <summary>Disconnects the client and stops all network traffic.</summary>
-    private void Disconnect()
+    public void Disconnect()
     {
-        Debug.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
+        Debug.Log($"{tcp.socket?.Client?.RemoteEndPoint} has disconnected.");
 
-        tcp.Disconnect();
-        udp.Disconnect();
+        tcp?.Disconnect();
+        udp?.Disconnect();
     }
 }

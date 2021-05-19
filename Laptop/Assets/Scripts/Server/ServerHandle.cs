@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ServerHandle
 {
-    public static void WelcomeReceivedCardboard(int _fromClient, Packet _packet)
+    public static void WelcomeReceivedLaptop(int _fromClient, Packet _packet)
     {
         int _clientIdCheck = _packet.ReadInt();
         string _username = _packet.ReadString();
@@ -14,10 +14,10 @@ public class ServerHandle
         {
             Debug.Log($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
         }
-        Server.clients[_fromClient].SendIntoGame(_username);
+        Server.clients[_fromClient].SendIntoSession(_username);
     }
 
-    public static void WelcomeReceivedLaptop(int _fromClient, Packet _packet)
+    public static void WelcomeReceivedCardboard(int _fromClient, Packet _packet)
     {
         int _clientIdCheck = _packet.ReadInt();
         string _username = _packet.ReadString();
@@ -28,6 +28,6 @@ public class ServerHandle
         {
             Debug.Log($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
         }
-        Server.clients[_fromClient].SendIntoGame(_username, _instrumentType);
+        Server.clients[_fromClient].SendIntoSession(_username, _instrumentType);
     }
 }

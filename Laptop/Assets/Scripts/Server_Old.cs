@@ -154,12 +154,12 @@ class Server_Old: MonoBehaviour
         // If server also is part of p2p network, replace local ip with external ip
         int i = ip_addresses.IndexOf("127.0.0.1");
         if (i != -1)
-            ip_addresses[i] = EXTERNAL_IP;
+            ip_addresses[i] = SERVER_IP;
         else
         {
             i = ip_addresses.IndexOf("192.168.0.1");
             if (i != -1)
-                ip_addresses[i] = EXTERNAL_IP;
+                ip_addresses[i] = SERVER_IP;
         }
         // Send all ip addresses except their own to every client
         foreach (var conn in connections)
@@ -169,7 +169,7 @@ class Server_Old: MonoBehaviour
             if (ip_addresses_to_send.Count == ip_addresses.Count)
             {
                 // Nothing changed so we are sending to local host
-                ip_addresses_to_send.Remove(EXTERNAL_IP);
+                ip_addresses_to_send.Remove(SERVER_IP);
             }
             //conn.Send(new P2PInfo(ip_addresses_to_send));
         }

@@ -8,14 +8,19 @@ namespace TTISDProject
 {
     class AudioHandler : MonoBehaviour
     {
+        public static AudioHandler instance;
+
         private static readonly int SAMPLE_RATE = 44100;
         private static readonly int INPUT_CHANNELS = 2;
         private static readonly int OUTPUT_CHANNELS = 2;
         private static readonly int BUFFER_SIZE = 1024 * 32;
         private static readonly WaveFormat SAMPLE_FORMAT = WaveFormat.CreateIeeeFloatWaveFormat(SAMPLE_RATE, OUTPUT_CHANNELS);
 
+        private static bool allowPlayerAudio = false;
+        private static bool initialized = false;
+
         private static AsioOut AsioDriver;
-        private static BufferedSampleProvider[] PlayerAudio = new BufferedSampleProvider[Constants.MAX_PLAYERS];
+        private static Dictionary<int, BufferedSampleProvider> PlayerAudio = new Dictionary<int, BufferedSampleProvider>();
         private static CachedSound ClickSound = new CachedSound("Assets/Audio/click.wav");
         private static MixingSampleProvider Mixer;
 
@@ -26,16 +31,13 @@ namespace TTISDProject
 
         private static float[] float_buffer = new float[1024 * 16];
 
-        // Start is called before the first frame update
-        void Start()
+        /* Intialize stuff */
+        public void Start()
         {
-            //StartAudioHandler(AsioOut.GetDriverNames()[0]);
-        }
+            Mixer = new MixingSampleProvider(SAMPLE_FORMAT);
+            Mixer.MixerInputEnded += Mixer_MixerInputEnded;
 
-        // Update is called once per frame
-        void Update()
-        {
-
+            AddPlayer(-1);
         }
 
         private void OnApplicationQuit()
@@ -45,30 +47,18 @@ namespace TTISDProject
 
         public static void Dispose()
         {
+            allowPlayerAudio = false;
             AsioDriver?.Dispose();
-            foreach (var buff in PlayerAudio)
+            foreach (var b in PlayerAudio.Values)
             {
-                buff?.ClearBuffer();
+                b.ClearBuffer();
             }
-            Mixer?.RemoveAllMixerInputs();
-            Loops.Clear();
-            LoopLength = 0;
-            LoopsPaused = false;
         }
-        public static void StartAudioHandler(string driverName)
+        public static void SetAsio(string driverName)
         {
             Dispose();
 
-            Mixer = new MixingSampleProvider(SAMPLE_FORMAT);
-            Mixer.MixerInputEnded += Mixer_MixerInputEnded;
-            // Create input buffers for player audio
-            for (int i = 0; i < PlayerAudio.Length; i++)
-            {
-                PlayerAudio[i] = new BufferedSampleProvider(SAMPLE_FORMAT);
-                PlayerAudio[i].BufferLength = BUFFER_SIZE;
-                PlayerAudio[i].DiscardOnBufferOverflow = true;
-                Mixer.AddMixerInput(PlayerAudio[i]);
-            }
+            /* Create pipeline */
             var compressor = new SimpleCompressorEffect(Mixer);
             compressor.Enabled = true;
             compressor.MakeUpGain = 0;
@@ -78,11 +68,13 @@ namespace TTISDProject
             //compressor.Release = 1;*/
             var audioOut = new SampleToWaveProvider16(compressor);
 
-            // Init AsioOut for recording and playback
+            /* Init AsioOut for recording and playback */
             AsioDriver = new AsioOut(driverName);
             AsioDriver.AudioAvailable += OnAsioOutAudioAvailable;
             AsioDriver.InitRecordAndPlayback(audioOut, INPUT_CHANNELS, SAMPLE_RATE);
             AsioDriver.Play();
+
+            allowPlayerAudio = true;
         }
 
         public static void StopLoop()
@@ -145,7 +137,7 @@ namespace TTISDProject
                 if (audio.Length != LoopLength)
                 {
                     audio = ResizeAudio(audio, LoopLength);
-                    Console.WriteLine("Succesfully resized audio");
+                    Debug.Log("Succesfully resized audio");
                 }
                 LoopSampleProvider loop = new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(audio, SAMPLE_FORMAT)));
                 loop.Position = Loops[0].Position;
@@ -158,7 +150,7 @@ namespace TTISDProject
 
         private static void Mixer_MixerInputEnded(object sender, SampleProviderEventArgs e)
         {
-            //Console.WriteLine("Mixer input ended!");
+            Debug.Log("Mixer input ended!");
         }
 
         public static void PlayClickSound()
@@ -166,11 +158,25 @@ namespace TTISDProject
             Mixer?.AddMixerInput(new CachedSoundSampleProvider(ClickSound));
         }
 
+        public static void AddPlayer(int id)
+        {
+            var b = new BufferedSampleProvider(SAMPLE_FORMAT);
+            b.BufferLength = BUFFER_SIZE;
+            b.DiscardOnBufferOverflow = true;
+            PlayerAudio.Add(id, b);
+
+            Mixer.AddMixerInput(b);
+        }
+
         public static void PlayPlayerAudio(float[] audio, int count, int player_id)
         {
-            if (player_id < Constants.MAX_PLAYERS && player_id >= 0)
+            if (allowPlayerAudio)
             {
-                PlayerAudio[player_id]?.AddSamples(audio, 0, count);
+                BufferedSampleProvider b;
+                if (PlayerAudio.TryGetValue(player_id, out b))
+                {
+                    b.AddSamples(audio, 0, count);
+                }
             }
         }
 
@@ -180,11 +186,27 @@ namespace TTISDProject
             e.GetAsInterleavedSamples(float_buffer);
             int amount_samples = e.SamplesPerBuffer * e.InputBuffers.Length;
             // Play to self
-            PlayerAudio[0].AddSamples(float_buffer, 0, amount_samples);
+            BufferedSampleProvider b;
+            if (PlayerAudio.TryGetValue(-1, out b))
+            {
+                b.AddSamples(float_buffer, 0, amount_samples);
+            }
             // Send to peers
-            //Client.SendAudioToPeers(float_buffer, amount_samples);
+            SessionManager.SendAudioToPeers(float_buffer, amount_samples);
             // Send to loop recorder
             //LoopRecorder.HandleAudio(float_buffer, amount_samples);
+        }
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+            }
+            else if (instance != this)
+            {
+                Debug.Log("Instance already exists, destroying object!");
+                Destroy(this);
+            }
         }
     }
 }

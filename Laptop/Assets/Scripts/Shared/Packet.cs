@@ -8,7 +8,8 @@ using UnityEngine;
 public enum ServerPackets
 {
     welcome = 1,
-    addPlayer,
+    addCardboard,
+    addLaptop,
 }
 
 /// <summary>Sent from client to server.</summary>

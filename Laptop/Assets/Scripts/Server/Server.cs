@@ -8,7 +8,7 @@ using UnityEngine;
 public class Server
 {
 
-    public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
+    public static Dictionary<int, ServerClient> clients = new Dictionary<int, ServerClient>();
     public delegate void PacketHandler(int _fromClient, Packet _packet);
     public static Dictionary<int, PacketHandler> packetHandlers;
 
@@ -29,6 +29,17 @@ public class Server
         udpListener.BeginReceive(UDPReceiveCallback, null);
 
         Debug.Log($"Server started on port {Constants.SERVER_PORT}.");
+    }
+
+    public static void Dispose()
+    {
+        tcpListener?.Stop();
+        udpListener?.Close();
+        udpListener?.Dispose();
+        foreach (ServerClient c in clients.Values)
+        {
+            c?.Disconnect();
+        }
     }
 
     /// <summary>Handles new TCP connections.</summary>
@@ -116,7 +127,7 @@ public class Server
     {
         for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
-            clients.Add(i, new Client(i));
+            clients.Add(i, new ServerClient(i));
         }
 
         packetHandlers = new Dictionary<int, PacketHandler>()
