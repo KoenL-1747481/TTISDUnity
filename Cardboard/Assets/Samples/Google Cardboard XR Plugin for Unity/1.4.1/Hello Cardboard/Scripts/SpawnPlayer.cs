@@ -15,6 +15,7 @@ public class SpawnPlayer : MonoBehaviour
     
     List<AvatarControllerClassic> playerAvatarControllers = new List<AvatarControllerClassic>();
 
+
     List<int> playerIDs = new List<int>();
 
     bool firstPlayer = true;
@@ -31,15 +32,25 @@ public class SpawnPlayer : MonoBehaviour
 
     public void addNewPlayer(int playerID, string instrumentName)
     {
-        playerIDs.Add(playerID);
-        ThreadManager.ExecuteOnMainThread(() => { 
+        print("KEERERERREEREL IK ZIT IN DE ADD NEW PLAYER");
+        
+        //print(playerIDs.Count);
+        ThreadManager.ExecuteOnMainThread(() => {
+            playerIDs.Add(playerID);
             spawnPlayer(playerID, instrumentName); 
         });
     }
 
     public void updateAvatar(int id, List<Quaternion> newBoneRotations)
     {
-        playerAvatarControllers[playerIDs.IndexOf(id)].updateAvatarBones(newBoneRotations);
+        try
+        {
+            playerAvatarControllers[0].updateAvatarBones(newBoneRotations);
+        } catch(Exception e)
+        {
+            print(e);
+        }
+        
     }
 
     public void spawnPlayer(int playerID, string instrumentName)

@@ -9,7 +9,7 @@ public class ServerHandle
     {
         try
         {
-            Debug.Log("Received kinect data!");
+            //Debug.Log("Received kinect data!");
             List<Quaternion> boneRotations = _packet.ReadQuaternionList();
             SessionManager.instance.HandleKinectData(_fromClient, boneRotations);
         } catch (Exception e)
