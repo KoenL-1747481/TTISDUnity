@@ -56,9 +56,18 @@ public class Server
                 {
                     return;
                 }
-
-
-                HandleData(_clientId, _packet);
+                /* Check if we have spawned the cardboard in the scene with this id */
+                List<int> cardboard_ids = new List<int>();
+                Debug.Log("Cardboard ids: " + cardboard_ids.ToString());
+                Debug.Log("Received cardboard id: " + _clientId);
+                foreach (Player c in SessionManager.cardboards)
+                {
+                    cardboard_ids.Add(c.id);
+                }
+                if (cardboard_ids.Contains(_clientId))
+                {
+                    HandleData(_clientId, _packet);
+                }
             }
         }
         catch (Exception _ex)
