@@ -18,6 +18,8 @@ public class SpawnPlayer : MonoBehaviour
     List<AvatarController> playerAvatarControllers = new List<AvatarController>();
 
     public Action addPlayer;
+
+    List<int> playerIDs = new List<int>();
     // Start is called before the first frame update
     void Start()
     {
@@ -30,9 +32,10 @@ public class SpawnPlayer : MonoBehaviour
         //spawnPlayer(0, "Keyboard");
     }
 
-    public void addNewPlayer(int playerIndex, string instrumentName)
+    public void addNewPlayer(int playerID, string instrumentName)
     {
-        addPlayer = new Action(() => { spawnPlayer(playerIndex, instrumentName); });
+        playerIDs.Add(playerID);
+        addPlayer = new Action(() => { spawnPlayer(playerIDs[playerIDs.Count-1], instrumentName); });
     }
 
     private void Update()
@@ -46,7 +49,7 @@ public class SpawnPlayer : MonoBehaviour
 
     public void updateAvatar(int id, List<Quaternion> newBoneRotations)
     {
-        playerAvatarControllers[id].updateAvatarBones(newBoneRotations);
+        playerAvatarControllers[playerIDs[playerIDs.IndexOf(id)]].updateAvatarBones(newBoneRotations);
     }
 
     public void spawnPlayer(int playerIndex, string instrumentName)
