@@ -115,6 +115,7 @@ public class AvatarController : MonoBehaviour
 			}
 			else if(specIndex2JointMap.ContainsKey(boneIndex))
 			{
+				newBoneRotations.Add(Quaternion.identity);
 				// special bones (clavicles)
 				List<KinectWrapper.NuiSkeletonPositionIndex> alJoints = !mirroredMovement ? specIndex2JointMap[boneIndex] : specIndex2MirrorJointMap[boneIndex];
 				
