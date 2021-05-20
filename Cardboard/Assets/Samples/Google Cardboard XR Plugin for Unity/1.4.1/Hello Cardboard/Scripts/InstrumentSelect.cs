@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class InstrumentSelect : MonoBehaviour
+public class SpawnPlayer : MonoBehaviour
 {
     [SerializeField] private List<GameObject> instrumentModels;
 
@@ -50,10 +50,17 @@ public class InstrumentSelect : MonoBehaviour
             {
                 Vector3 playerPos = spawnPoints[playerIndex].position;
                 playerPos -= spawnPoints[playerIndex].forward*0.3f;
-                Instantiate(instrumentModels[i], spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
-                Instantiate(playerModel, playerPos, spawnPoints[playerIndex].rotation);
+                GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
+                GameObject player = Instantiate(playerModel, playerPos, spawnPoints[playerIndex].rotation);
+
+                Guitar g = instrument.GetComponent<Guitar>();
+
+                g?.setRightHand(player.GetComponent<Musician>().getRightHand());
+                g?.setLeftHand(player.GetComponent<Musician>().getLeftHand());
+
                 Camera.main.gameObject.SetActive(false);
                 spawnPointCameras[playerIndex].SetActive(true);
+
                 break;
             }
             i++;

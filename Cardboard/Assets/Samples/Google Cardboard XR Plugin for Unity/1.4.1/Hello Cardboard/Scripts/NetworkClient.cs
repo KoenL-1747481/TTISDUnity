@@ -16,7 +16,7 @@ using NetworkCommsDotNet.Connections.TCP;
 
 public class NetworkClient : MonoBehaviour
 {
-    [SerializeField] private InstrumentSelect instrumentSelector;
+    [SerializeField] private SpawnPlayer playerSpawner;
 
     private static readonly string LOCAL_IP_KOEN = "192.168.0.68";
     private static readonly string LOCAL_IP_JEFFREY = "192.168.0.212";
