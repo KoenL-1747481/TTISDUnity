@@ -150,13 +150,21 @@ public class SessionManager : MonoBehaviour
 
     public void AddLaptop(Player player)
     {
-        players.Add(player.id, player);
+        // Can be yourself
+        if (player.id == clientServer.myId)
+        {
+            players.Add(player.id, player);
+        }
+        else
+        {
+            players.Add(player.id, player);
 
-        UdpClient new_conn = new UdpClient();
-        new_conn.Connect(IPAddress.Parse(player.IP), Constants.P2P_PORT);
-        laptopPeers.Add(player, new_conn);
+            UdpClient new_conn = new UdpClient();
+            new_conn.Connect(IPAddress.Parse(player.IP), Constants.P2P_PORT);
+            laptopPeers.Add(player, new_conn);
 
-        AudioHandler.AddPlayer(player.id);
+            AudioHandler.AddPlayer(player.id);
+        }
     }
 
     public void AddCardboard(Player player)

@@ -218,13 +218,13 @@ public class ServerClient
 
         player = new Player(id, _playerName, player_ip, _instrumentType);
 
-        // Send all players (except himself) to the new player if player is non-cardboard
+        // Send all players to the new player if player is non-cardboard
         // Send all cardboards (except himself) to the new player if player is cardboard
         foreach (ServerClient _client in Server.clients.Values)
         {
-            if (_client.player != null && _client.id != id)
+            if (_client.player != null)
             {
-                if (_client.player.instrumentType != null) // Other player is cardboard
+                if (_client.player.instrumentType != null && _client.id != id) // Other player is cardboard
                     ServerSend.AddCardboard(id, _client.player); // Always add cardboard
                 else // Other player is laptop
                 { 

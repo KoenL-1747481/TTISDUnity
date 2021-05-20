@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
@@ -39,11 +40,18 @@ public class ClientSend : MonoBehaviour
     {
         //Debug.Log("Sending kinect data...");
         int cardboard_id = 0;
+        string myIP = SessionManager.players[SessionManager.clientServer.myId].IP;
+        print("My ip: " + myIP);
         // Find the id of the cardboard matching this laptop
         foreach (Player c in SessionManager.cardboards.Keys)
         {
-            if (c.IP == SessionManager.clientServer.IP)
+            print("Cardboard IP: " + c.IP);
+            if (c.IP == myIP)
+            {
+                print("Matching IP Found!");
                 cardboard_id = c.id;
+                print("ID is: " + cardboard_id.ToString());
+            }
         }
         if (cardboard_id == 0) // If we didn't find matching cardboard, don't send kinect data
             return;
