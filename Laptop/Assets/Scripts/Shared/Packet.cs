@@ -10,6 +10,7 @@ public enum ServerPackets
     welcome = 1,
     addCardboard,
     addLaptop,
+    loopRecordResponse,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -17,6 +18,8 @@ public enum ClientPackets
 {
     welcomeReceivedCardboard = 1,
     welcomeReceivedLaptop,
+    kinectData,
+    loopRecordRequest,
 }
 
 public class Packet : IDisposable

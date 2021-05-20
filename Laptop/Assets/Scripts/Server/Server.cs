@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Timers;
 using UnityEngine;
 
 public class Server
 {
+    private static int DEFAULT_BPM = 120;
+    private static int DEFAULT_BARS = 4;
 
     public static Dictionary<int, ServerClient> clients = new Dictionary<int, ServerClient>();
     public delegate void PacketHandler(int _fromClient, Packet _packet);
@@ -14,6 +17,12 @@ public class Server
 
     private static TcpListener tcpListener;
     private static UdpClient udpListener;
+
+    /* Session settings */
+    private static int BPM = DEFAULT_BPM;
+    private static int Bars = DEFAULT_BARS;
+    private static ServerClient RecordingPlayer = null;
+    private static Timer RecordTimeoutTimer = null;
 
     /// <summary>Starts the server.</summary>
     public static void Start()
@@ -31,6 +40,37 @@ public class Server
         Debug.Log($"Server started on port {Constants.SERVER_PORT}.");
     }
 
+    public static void OnRecordRequest(int clientId)
+    {
+        Debug.Log("RecordRequest received.");
+        if (RecordingPlayer != null)
+        {
+            Debug.Log("Someone is already recording!");
+            // TODO: Send bool false 
+            //connection.Send(new RecordResponse(req, false, "Someone is already recording!", BPM, Bars));
+        }
+        else
+        {
+            Debug.Log("Recording is allowed.");
+            RecordingPlayer = clients[clientId];
+            // TODO: Send bool true
+            //connection.Send(new RecordResponse(req, true, "", BPM, Bars));
+
+            // If no SendLoopRequest after certain time, then timeout and reset current record request
+            double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
+            double timeoutInterval = clickInterval * 4.0 * (Bars + 3.0);
+            RecordTimeoutTimer = new Timer(timeoutInterval);
+            RecordTimeoutTimer.Elapsed += (s, e_) =>
+            {
+                RecordingPlayer = null;
+                RecordTimeoutTimer.Stop();
+                RecordTimeoutTimer.Close();
+                Debug.Log("Record request timed out!");
+            };
+            RecordTimeoutTimer.Start();
+        }
+    }
+
     public static void Dispose()
     {
         tcpListener?.Stop();
@@ -40,6 +80,11 @@ public class Server
         {
             c?.Disconnect();
         }
+        RecordTimeoutTimer?.Stop();
+        RecordTimeoutTimer?.Close();
+        RecordingPlayer = null;
+        BPM = DEFAULT_BPM;
+        Bars = DEFAULT_BARS;
     }
 
     /// <summary>Handles new TCP connections.</summary>
@@ -133,7 +178,8 @@ public class Server
         packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 { (int)ClientPackets.welcomeReceivedCardboard, ServerHandle.WelcomeReceivedCardboard },
-                { (int)ClientPackets.welcomeReceivedLaptop, ServerHandle.WelcomeReceivedLaptop}
+                { (int)ClientPackets.welcomeReceivedLaptop, ServerHandle.WelcomeReceivedLaptop},
+                { (int)ClientPackets.loopRecordRequest, ServerHandle.LoopRecordRequestReceived},
             };
         Debug.Log("Initialized packets.");
     }

@@ -13,13 +13,13 @@ public class SessionManager : MonoBehaviour
 
     public static Client clientServer;
     public static Dictionary<int, Player> players = new Dictionary<int, Player>();
-    private static Dictionary<Player, UdpClient> laptopPeers = new Dictionary<Player, UdpClient>(); // Peers to send data to
+    private static Dictionary<Player, UdpClient> laptopPeers = new Dictionary<Player, UdpClient>(); // Peers to send audio data to
+    private static Dictionary<Player, Client> cardboards = new Dictionary<Player, Client>(); // Cardboards to send kinect data to
 
     private static UdpClient p2p_listener; // Listener that receives peer audio data
     private static bool listening;
     private static byte[] byte_buffer = new byte[1024 * 16];
     private static float[] float_buffer = new float[1024 * 16];
-    private static object peer_lock = new object();
 
     private void OnApplicationQuit()
     {
@@ -87,22 +87,71 @@ public class SessionManager : MonoBehaviour
         int amount_bytes = count * sizeof(float);
         Buffer.BlockCopy(audio, 0, byte_buffer, 0, amount_bytes);
         // Send to all peers
-        lock (peer_lock)
+        foreach (var peer in laptopPeers.Values)
         {
-            foreach (var peer in laptopPeers.Values)
+            try
             {
-                try
-                {
-                    Debug.Log("Sending audio to: " + peer.Client.RemoteEndPoint.ToString());
-                    peer.Send(byte_buffer, amount_bytes);
-                }
-                catch (Exception e)
-                {
-                    Debug.Log(e.ToString());
-                }
+                Debug.Log("Sending audio to: " + peer.Client.RemoteEndPoint.ToString());
+                peer.Send(byte_buffer, amount_bytes);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.ToString());
             }
         }
     }
+
+    public static void SendKinectToCardboards()
+    {
+        // TODO
+    }
+
+    #region loop_stuff
+    public void TryRecordLoop()
+    {
+        if (!LoopRecorder.IsRecording() && clientServer != null)
+        {
+            ClientSend.SendLoopRecordRequest();
+            /*try
+            {
+                response = await clientServer.SendAsync<RecordResponse>(new RecordRequest());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return;
+            }
+            if (response.OK)
+            {
+                LoopRecorder.StartRecording(response.BPM, response.Bars);
+            }
+            else
+            {
+                Console.WriteLine(response.Message);
+            }*/
+        }
+    }
+
+    public static void TrySendLoop(float[] audio)
+    {
+        Console.WriteLine("Audio recorded. Size: " + audio.Length);
+        if (clientServer != null)
+        {
+            // TODO: Send the loop to server
+            //response = await clientServer.SendAsync<SendLoopResponse>(new SendLoopRequest(audio));
+
+            // TODO: handle the response
+            //AudioHandler.AddLoop(audio);
+        }
+    }
+
+    // This request contains a new loop that needs to be played
+    private static void LoopUpdateRequestReceived(/*LoopUpdate req, Connection connection*/)
+    {
+        // TODO: when new loop has been recorded, handle packet
+        //AudioHandler.AddLoop(req.Audio);
+    }
+    #endregion
 
     public void AddLaptop(Player player)
     {
@@ -117,7 +166,11 @@ public class SessionManager : MonoBehaviour
 
     public void AddCardboard(Player player)
     {
-        // TODO
+        players.Add(player.id, player);
+
+        Client cardboard = new Client(player.IP, Constants.P2P_PORT);
+        cardboard.ConnectToServer();
+        cardboards.Add(player, cardboard);
     }
 
     private void Awake()

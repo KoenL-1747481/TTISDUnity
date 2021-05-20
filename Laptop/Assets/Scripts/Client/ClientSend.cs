@@ -33,5 +33,25 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void SendKinectData()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.kinectData))
+        {
+            // TODO
+        }
+    }
+
+    #region loop_packets
+    public static void SendLoopRecordRequest()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.loopRecordRequest))
+        {
+            SendTCPDataToServer(_packet);
+        }
+    }
+    #endregion
+
+
+
     #endregion
 }
