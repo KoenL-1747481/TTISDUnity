@@ -36,7 +36,7 @@ public class SessionManager : MonoBehaviour
     public void AddCardboard(Player player)
     {
         cardboards.Add(player);
-        spawnPlayer.spawnPlayer(player.id, player.instrumentType);
+        spawnPlayer.addNewPlayer(player.id, player.instrumentType);
     }
 
     public void HandleKinectData(int clientId, List<Quaternion> boneRotations)
