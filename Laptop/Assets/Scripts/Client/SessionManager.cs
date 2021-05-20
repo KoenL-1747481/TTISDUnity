@@ -39,10 +39,11 @@ public class SessionManager : MonoBehaviour
     {
         clientServer = new Client(Constants.SERVER_IP, Constants.SERVER_PORT);
         clientServer.ConnectToServer();
-
         p2p_listener = new UdpClient(Constants.P2P_PORT);
+
         listening = true;
         ThreadPool.QueueUserWorkItem(AudioListenerThread);
+
     }
 
     private static void AudioListenerThread(object state)
