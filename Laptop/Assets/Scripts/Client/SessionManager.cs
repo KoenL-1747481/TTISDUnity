@@ -66,7 +66,6 @@ public class SessionManager : MonoBehaviour
                         break;
                     }
                 }
-                Debug.Log("Peer id: " + peer_id.ToString());
                 if (peer_id != -1)
                 { // We found the player
                   // Convert to float array
