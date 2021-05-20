@@ -182,7 +182,7 @@ public class AvatarController : MonoBehaviour
 
 
 
-	public void updateAvatar(List<Quaternion> newBoneRotations)
+	public void updateAvatarBones(List<Quaternion> newBoneRotations)
 	{
 		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
 		{

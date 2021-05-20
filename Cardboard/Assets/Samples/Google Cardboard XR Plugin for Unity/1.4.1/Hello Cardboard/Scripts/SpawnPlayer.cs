@@ -15,6 +15,8 @@ public class SpawnPlayer : MonoBehaviour
     
     List<string> instrumentNames = new List<string>() {"Keyboard","Acoustic Guitar","Electric Guitar"};
 
+    List<AvatarController> playerAvatarControllers = new List<AvatarController>();
+
     public Action addPlayer;
     // Start is called before the first frame update
     void Start()
@@ -42,6 +44,11 @@ public class SpawnPlayer : MonoBehaviour
         }
     }
 
+    public void updateAvatar(int id, List<Quaternion> newBoneRotations)
+    {
+        playerAvatarControllers[id].updateAvatarBones(newBoneRotations);
+    }
+
     public void spawnPlayer(int playerIndex, string instrumentName)
     {
         int i = 0;
@@ -54,6 +61,7 @@ public class SpawnPlayer : MonoBehaviour
                 GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
                 GameObject player = Instantiate(playerModels[playerIndex], playerPos, spawnPoints[playerIndex].rotation);
 
+                playerAvatarControllers.Add(player.GetComponent<AvatarControllerClassic>());
                 Guitar g = instrument.GetComponent<Guitar>();
 
                 g?.setRightHand(player.GetComponent<Musician>().getRightHand());
