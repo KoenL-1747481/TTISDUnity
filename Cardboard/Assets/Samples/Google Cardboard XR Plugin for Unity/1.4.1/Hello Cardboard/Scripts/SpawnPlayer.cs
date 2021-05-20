@@ -13,7 +13,7 @@ public class SpawnPlayer : MonoBehaviour
     [SerializeField] private List<GameObject> playerModels;
     private List<int> chosenPlayerIndexes = new List<int>();
     
-    List<string> instrumentNames = new List<string>() {"Keyboard","Acoustic Guitar","Electric Guitar"};
+    //List<string> instrumentNames = new List<string>() {"Keyboard","Acoustic Guitar","Electric Guitar"};
 
     List<AvatarController> playerAvatarControllers = new List<AvatarController>();
 
@@ -55,9 +55,9 @@ public class SpawnPlayer : MonoBehaviour
     public void spawnPlayer(int playerIndex, string instrumentName)
     {
         int i = 0;
-        foreach (string model in instrumentNames)
+        foreach (GameObject model in instrumentModels)
         {
-            if (model == instrumentName)
+            if (model.name == instrumentName)
             {
                 Vector3 playerPos = spawnPoints[playerIndex].position;
                 playerPos -= spawnPoints[playerIndex].forward*0.3f;
