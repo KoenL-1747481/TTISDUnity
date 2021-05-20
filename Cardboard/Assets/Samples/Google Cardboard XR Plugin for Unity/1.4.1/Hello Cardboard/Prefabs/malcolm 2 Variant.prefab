@@ -92,12 +92,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6974225858140595305, guid: 209283f67df0d804f86017f4724ef567, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 6974225858140595305, guid: 209283f67df0d804f86017f4724ef567, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.67
       objectReference: {fileID: 0}
     - target: {fileID: 6974225858140595309, guid: 209283f67df0d804f86017f4724ef567, type: 3}
       propertyPath: m_Name
-      value: malcolm 2
+      value: malcolm 2 Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6974225858204802941, guid: 209283f67df0d804f86017f4724ef567, type: 3}
       propertyPath: m_Materials.Array.data[0]

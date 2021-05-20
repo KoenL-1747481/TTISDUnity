@@ -35,9 +35,9 @@ public class NetworkClient : MonoBehaviour
 
     public void Start()
 	{
-        ConnectionInfo connInfo = new ConnectionInfo(SERVER_IP_KOEN, SERVER_PORT);
+        /*ConnectionInfo connInfo = new ConnectionInfo(SERVER_IP_KOEN, SERVER_PORT);
         newTCPConn = TCPConnection.GetConnection(connInfo);
-        newTCPConn.SendObject("unk", "diggema");
+        newTCPConn.SendObject("unk", "diggema");*/
     }
 
    /* public IEnumerator klets()
