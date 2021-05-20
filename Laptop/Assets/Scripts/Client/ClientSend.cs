@@ -37,7 +37,7 @@ public class ClientSend : MonoBehaviour
 
     public static void SendKinectData(List<Quaternion> boneRotations)
     {
-        Debug.Log("Sending kinect data...");
+        //Debug.Log("Sending kinect data...");
         using (Packet _packet = new Packet((int)ClientPackets.kinectData))
         {
             _packet.Write(boneRotations);

@@ -13,3 +13,4 @@ Laptop/Assets/packages.config
 Laptop/Assets/Packages/*
 
 Laptop/Assets/Packages/Microsoft.Kinect.2.0.1410.19000.meta
+Laptop/Packages/packages-lock.json
