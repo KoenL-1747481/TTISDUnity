@@ -35,7 +35,7 @@ public class SpawnPlayer : MonoBehaviour
     public void addNewPlayer(int playerID, string instrumentName)
     {
         playerIDs.Add(playerID);
-        addPlayer = new Action(() => { spawnPlayer(playerIDs[playerIDs.Count-1], instrumentName); });
+        addPlayer = new Action(() => { spawnPlayer(playerIDs.Count-1, instrumentName); });
     }
 
     private void Update()
