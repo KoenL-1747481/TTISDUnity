@@ -19,6 +19,8 @@ public class SpawnPlayer : MonoBehaviour
 
 
     List<int> playerIDs = new List<int>();
+
+    bool firstPlayer = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -62,8 +64,12 @@ public class SpawnPlayer : MonoBehaviour
                 g?.setRightHand(player.GetComponent<Musician>().getRightHand());
                 g?.setLeftHand(player.GetComponent<Musician>().getLeftHand());
 
-                Camera.main.gameObject.SetActive(false);
-                spawnPointCameras[playerIndex].SetActive(true);
+                if (firstPlayer)
+                {
+                    Camera.main.gameObject.SetActive(false);
+                    spawnPointCameras[playerIndex].SetActive(true);
+                    firstPlayer = false;
+                }
 
                 break;
             }
