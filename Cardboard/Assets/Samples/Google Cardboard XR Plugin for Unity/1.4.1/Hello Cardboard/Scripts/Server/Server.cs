@@ -87,6 +87,7 @@ public class Server
             using (Packet _packet = new Packet(_packetBytes))
             {
                 int _packetId = _packet.ReadInt();
+                Debug.Log("Packet id: " + _packetId);
                 Server.packetHandlers[_packetId](_clientId, _packet); // Call appropriate method to handle the packet
             }
         });
