@@ -33,11 +33,19 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void SendKinectData()
+    public static void SendKinectData(List<Quaternion> boneRotations)
     {
+        Debug.Log("Sending kinect data...");
         using (Packet _packet = new Packet((int)ClientPackets.kinectData))
         {
-            // TODO
+            _packet.Write(SessionManager.clientServer.myId);
+            _packet.Write(boneRotations);
+
+            _packet.WriteLength();
+            foreach (Client cardboard in SessionManager.cardboards.Values)
+            {
+                cardboard.udp?.SendData(_packet);
+            }
         }
     }
 

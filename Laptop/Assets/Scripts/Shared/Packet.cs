@@ -180,6 +180,15 @@ public class Packet : IDisposable
         Write(_value.z);
         Write(_value.w);
     }
+
+    public void Write(List<Quaternion> _value)
+    {
+        Write(_value.Count);
+        foreach (Quaternion q in _value)
+        {
+            Write(q);
+        }
+    }
     #endregion
 
     #region Read Data
@@ -364,6 +373,17 @@ public class Packet : IDisposable
     public Quaternion ReadQuaternion(bool _moveReadPos = true)
     {
         return new Quaternion(ReadFloat(_moveReadPos), ReadFloat(_moveReadPos), ReadFloat(_moveReadPos), ReadFloat(_moveReadPos));
+    }
+
+    public List<Quaternion> ReadQuaternionList(bool _moveReadPos = true)
+    {
+        int count = ReadInt(_moveReadPos);
+        List<Quaternion> l = new List<Quaternion>(count);
+        for (int i = 0; i < count; i++)
+        {
+            l.Add(ReadQuaternion(_moveReadPos));
+        }
+        return l;
     }
     #endregion
 

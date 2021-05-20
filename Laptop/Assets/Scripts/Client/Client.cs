@@ -173,7 +173,14 @@ public class Client
                     using (Packet _packet = new Packet(_packetBytes))
                     {
                         int _packetId = _packet.ReadInt();
-                        packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                        try
+                        {
+                            packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                        } catch (Exception e)
+                        {
+                            Debug.Log("No handler for packet probably");
+                            Debug.Log(e.Message);
+                        }
                     }
                 });
 

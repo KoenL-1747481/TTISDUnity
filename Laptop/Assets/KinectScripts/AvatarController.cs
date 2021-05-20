@@ -125,7 +125,7 @@ public class AvatarController : MonoBehaviour
 				}
 			}
 		}
-		SessionManager.SendKinectToCardboards(newBoneRotations);
+		ClientSend.SendKinectData(newBoneRotations);
 	}
 
 	Quaternion getBoneRotation(int boneIndex)
