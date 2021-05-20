@@ -41,7 +41,6 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)ClientPackets.kinectData))
         {
             _packet.Write(boneRotations);
-
             _packet.WriteLength();
             foreach (UdpClient cardboard in SessionManager.cardboards.Values)
             {

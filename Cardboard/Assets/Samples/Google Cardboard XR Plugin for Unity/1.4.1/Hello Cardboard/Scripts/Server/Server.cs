@@ -20,10 +20,10 @@ public class Server
         Debug.Log("Starting server...");
         InitializeServerData();
 
-        udpListener = new UdpClient(Constants.P2P_PORT);
+        udpListener = new UdpClient(Constants.CARDBOARD_PORT);
         udpListener.BeginReceive(UDPReceiveCallback, null);
 
-        Debug.Log($"Server started on port {Constants.P2P_PORT}.");
+        Debug.Log($"Server started on port {Constants.CARDBOARD_PORT}.");
     }
 
     

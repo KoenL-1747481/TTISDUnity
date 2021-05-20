@@ -164,7 +164,7 @@ public class SessionManager : MonoBehaviour
         players.Add(player.id, player);
 
         UdpClient new_conn = new UdpClient();
-        new_conn.Connect(IPAddress.Parse(player.IP), Constants.P2P_PORT);
+        new_conn.Connect(IPAddress.Parse(player.IP), Constants.CARDBOARD_PORT);
         cardboards.Add(player, new_conn);
     }
 
