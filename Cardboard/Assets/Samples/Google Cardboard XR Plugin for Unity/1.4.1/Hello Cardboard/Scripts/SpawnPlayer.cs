@@ -45,7 +45,7 @@ public class SpawnPlayer : MonoBehaviour
     {
         try
         {
-            playerAvatarControllers[0].updateAvatarBones(newBoneRotations);
+            playerAvatarControllers[playerIDs.IndexOf(id)].updateAvatarBones(newBoneRotations);
         } catch(Exception e)
         {
             print(e);
