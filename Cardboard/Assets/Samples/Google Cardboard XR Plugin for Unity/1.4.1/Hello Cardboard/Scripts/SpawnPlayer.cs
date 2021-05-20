@@ -13,8 +13,6 @@ public class SpawnPlayer : MonoBehaviour
     [SerializeField] private List<GameObject> playerModels;
     private List<int> chosenPlayerIndexes = new List<int>();
     
-    //List<string> instrumentNames = new List<string>() {"Keyboard","Acoustic Guitar","Electric Guitar"};
-
     List<AvatarController> playerAvatarControllers = new List<AvatarController>();
 
 
@@ -36,29 +34,28 @@ public class SpawnPlayer : MonoBehaviour
     public void addNewPlayer(int playerID, string instrumentName)
     {
         playerIDs.Add(playerID);
-        print(playerIDs);
-        print(playerID + " "+ instrumentName);
         ThreadManager.ExecuteOnMainThread(() => { 
-            spawnPlayer(playerIDs.IndexOf(playerID), instrumentName); 
+            spawnPlayer(playerID, instrumentName); 
         });
     }
 
     public void updateAvatar(int id, List<Quaternion> newBoneRotations)
     {
-        playerAvatarControllers[playerIDs[playerIDs.IndexOf(id)]].updateAvatarBones(newBoneRotations);
+        playerAvatarControllers[playerIDs.IndexOf(id)].updateAvatarBones(newBoneRotations);
     }
 
-    public void spawnPlayer(int playerIndex, string instrumentName)
+    public void spawnPlayer(int playerID, string instrumentName)
     {
         int i = 0;
+        int indexOfPlayerID = playerIDs.IndexOf(playerID);
         foreach (GameObject model in instrumentModels)
         {
             if (model.name == instrumentName)
             {
-                Vector3 playerPos = spawnPoints[playerIndex].position;
-                playerPos -= spawnPoints[playerIndex].forward*0.3f;
-                GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[playerIndex].position, spawnPoints[playerIndex].rotation);
-                GameObject player = Instantiate(playerModels[playerIndex], playerPos, spawnPoints[playerIndex].rotation);
+                Vector3 playerPos = spawnPoints[indexOfPlayerID].position;
+                playerPos -= spawnPoints[indexOfPlayerID].forward*0.3f;
+                GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[indexOfPlayerID].position, spawnPoints[indexOfPlayerID].rotation);
+                GameObject player = Instantiate(playerModels[playerID], playerPos, spawnPoints[indexOfPlayerID].rotation);
 
                 playerAvatarControllers.Add(player.GetComponent<AvatarControllerClassic>());
                 Guitar g = instrument.GetComponent<Guitar>();
@@ -69,7 +66,7 @@ public class SpawnPlayer : MonoBehaviour
                 if (firstPlayer)
                 {
                     Camera.main.gameObject.SetActive(false);
-                    spawnPointCameras[playerIndex].SetActive(true);
+                    spawnPointCameras[indexOfPlayerID].SetActive(true);
                     firstPlayer = false;
                 }
 
