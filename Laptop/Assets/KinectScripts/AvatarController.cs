@@ -104,8 +104,12 @@ public class AvatarController : MonoBehaviour
 
 		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
 		{
-			if (!bones[boneIndex]) 
+			if (!bones[boneIndex])
+            {
+				newBoneRotations.Add(Quaternion.identity);
 				continue;
+			}
+				
 			
 			if(boneIndex2JointMap.ContainsKey(boneIndex))
 			{
