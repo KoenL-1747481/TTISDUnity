@@ -42,6 +42,7 @@ public class Client
         packetHandlers = new Dictionary<int, PacketHandler>()
         {
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
+            { (int)ServerPackets.addCardboard, ClientHandle.AddCardboard },
         };
         Debug.Log("Initialized packets.");
     }
