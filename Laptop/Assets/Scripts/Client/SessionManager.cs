@@ -54,6 +54,7 @@ public class SessionManager : MonoBehaviour
             while (listening)
             {
                 byte[] audio = p2p_listener.Receive(ref endpoint);
+                Debug.Log("Received audio");
                 // Get the player from the IP
                 int peer_id = -1;
                 foreach (Player p in laptopPeers.Keys)
@@ -64,6 +65,7 @@ public class SessionManager : MonoBehaviour
                         break;
                     }
                 }
+                Debug.Log("Peer id: " + peer_id.ToString());
                 if (peer_id != -1)
                 { // We found the player
                   // Convert to float array
@@ -109,6 +111,8 @@ public class SessionManager : MonoBehaviour
         UdpClient new_conn = new UdpClient();
         new_conn.Connect(IPAddress.Parse(player.IP), Constants.P2P_PORT);
         laptopPeers.Add(player, new_conn);
+
+        AudioHandler.AddPlayer(player.id);
     }
 
     public void AddCardboard(Player player)
