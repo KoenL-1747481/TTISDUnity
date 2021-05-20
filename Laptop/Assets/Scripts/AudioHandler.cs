@@ -170,11 +170,9 @@ namespace TTISDProject
 
         public static void PlayPlayerAudio(float[] audio, int count, int player_id)
         {
-            Debug.Log("Before play player audio");
             if (allowPlayerAudio)
             {
                 BufferedSampleProvider b;
-                Debug.Log("Before try get value");
                 if (PlayerAudio.TryGetValue(player_id, out b))
                 {
                     Debug.Log("PLAYING AUDIO!");
