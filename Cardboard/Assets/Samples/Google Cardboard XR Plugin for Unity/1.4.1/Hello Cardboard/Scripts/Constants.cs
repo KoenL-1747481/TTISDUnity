@@ -13,6 +13,8 @@ public class Constants
 
     private static readonly string LOCAL_IP_KOEN = "192.168.0.68";
     private static readonly string LOCAL_IP_JEFFREY = "192.168.0.212";
+    private static readonly string LOCAL_IP_SEM = "192.168.0.186";
     private static readonly string SERVER_IP_KOEN = "94.110.227.197";
     private static readonly string SERVER_IP_JEFFREY = "84.193.179.2";
+    private static readonly string SERVER_IP_SEM = "141.135.129.110";
 }
