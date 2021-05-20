@@ -38,6 +38,16 @@ public class ClientSend : MonoBehaviour
     public static void SendKinectData(List<Quaternion> boneRotations)
     {
         //Debug.Log("Sending kinect data...");
+        int cardboard_id = 0;
+        // Find the id of the cardboard matching this laptop
+        foreach (Player c in SessionManager.cardboards.Keys)
+        {
+            if (c.IP == SessionManager.clientServer.IP)
+                cardboard_id = c.id;
+        }
+        if (cardboard_id == 0) // If we didn't find matching cardboard, don't send kinect data
+            return;
+
         using (Packet _packet = new Packet((int)ClientPackets.kinectData))
         {
             _packet.Write(boneRotations);
@@ -46,7 +56,7 @@ public class ClientSend : MonoBehaviour
             {
                 try
                 {
-                    _packet.InsertInt(SessionManager.clientServer.myId); // Insert the client's ID at the start of the packet
+                    _packet.InsertInt(cardboard_id); // Insert the cardboard's ID at the start of the packet
                     cardboard.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
                 }
                 catch (Exception _ex)
