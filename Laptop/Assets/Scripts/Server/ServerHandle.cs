@@ -30,4 +30,10 @@ public class ServerHandle
         }
         Server.clients[_fromClient].SendIntoSession(_username, _instrumentType);
     }
+
+    public static void LoopRecordRequestReceived(int _fromClient, Packet _packet)
+    {
+        Server.OnRecordRequest(_fromClient);
+    }
+
 }
