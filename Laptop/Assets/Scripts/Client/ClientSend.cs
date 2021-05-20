@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 
 public class ClientSend : MonoBehaviour
@@ -38,13 +40,20 @@ public class ClientSend : MonoBehaviour
         Debug.Log("Sending kinect data...");
         using (Packet _packet = new Packet((int)ClientPackets.kinectData))
         {
-            _packet.Write(SessionManager.clientServer.myId);
             _packet.Write(boneRotations);
 
             _packet.WriteLength();
-            foreach (Client cardboard in SessionManager.cardboards.Values)
+            foreach (UdpClient cardboard in SessionManager.cardboards.Values)
             {
-                cardboard.udp?.SendData(_packet);
+                try
+                {
+                    _packet.InsertInt(SessionManager.clientServer.myId); // Insert the client's ID at the start of the packet
+                    cardboard.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
+                }
+                catch (Exception _ex)
+                {
+                    Debug.Log($"Error sending data to cardboard via UDP: {_ex}");
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ public class SessionManager : MonoBehaviour
     public static Client clientServer;
     public static Dictionary<int, Player> players = new Dictionary<int, Player>();
     private static Dictionary<Player, UdpClient> laptopPeers = new Dictionary<Player, UdpClient>(); // Peers to send audio data to
-    public static Dictionary<Player, Client> cardboards = new Dictionary<Player, Client>(); // Cardboards to send kinect data to
+    public static Dictionary<Player, UdpClient> cardboards = new Dictionary<Player, UdpClient>(); // Cardboards to send kinect data to
 
     private static UdpClient p2p_listener; // Listener that receives peer audio data
     private static bool listening;
@@ -163,9 +163,9 @@ public class SessionManager : MonoBehaviour
     {
         players.Add(player.id, player);
 
-        Client cardboard = new Client(player.IP, Constants.P2P_PORT);
-        cardboard.ConnectToServer();
-        cardboards.Add(player, cardboard);
+        UdpClient new_conn = new UdpClient();
+        new_conn.Connect(IPAddress.Parse(player.IP), Constants.P2P_PORT);
+        cardboards.Add(player, new_conn);
     }
 
     private void Awake()
