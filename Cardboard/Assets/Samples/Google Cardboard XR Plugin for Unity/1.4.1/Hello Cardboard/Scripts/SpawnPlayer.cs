@@ -36,8 +36,9 @@ public class SpawnPlayer : MonoBehaviour
     public void addNewPlayer(int playerID, string instrumentName)
     {
         playerIDs.Add(playerID);
+        playerIDs.Sort();
         ThreadManager.ExecuteOnMainThread(() => { 
-            spawnPlayer(playerIDs.Count-1, instrumentName); 
+            spawnPlayer(playerIDs.IndexOf(playerID), instrumentName); 
         });
     }
 
