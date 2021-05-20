@@ -87,6 +87,7 @@ public class ServerSend
 
             SendTCPData(_toClient, _packet);
         }
+        Debug.Log("Sent welcome message!");
     }
 
     public static void AddCardboard(int _toClient, Player player)

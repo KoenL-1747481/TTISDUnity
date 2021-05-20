@@ -13,7 +13,9 @@ public class ClientHandle : MonoBehaviour
         Debug.Log($"Message from server: {_msg}");
         SessionManager.clientServer.myId = _myId;
 
-        // TODO: ClientSend.WelcomeReceived(); met de instrument name
+        // Spawn myself and send welcome received
+        SessionManager.instance.AddCardboard(new Player(_myId, "Sample Username", ((IPEndPoint)SessionManager.clientServer.tcp.socket.Client.LocalEndPoint).Address.ToString(), SessionManager.MyInstrument));
+        ClientSend.WelcomeReceived();
 
         // Now that we have the client's id, connect UDP
         SessionManager.clientServer.udp.Connect(((IPEndPoint)SessionManager.clientServer.tcp.socket.Client.LocalEndPoint).Port);

@@ -24,6 +24,7 @@ public class ClientSend : MonoBehaviour
     /// <summary>Lets the server know that the welcome message was received.</summary>
     public static void WelcomeReceived()
     {
+        Debug.Log("Sending welcome received...");
         using (Packet _packet = new Packet((int)ClientPackets.welcomeReceivedCardboard))
         {
             _packet.Write(SessionManager.clientServer.myId);
