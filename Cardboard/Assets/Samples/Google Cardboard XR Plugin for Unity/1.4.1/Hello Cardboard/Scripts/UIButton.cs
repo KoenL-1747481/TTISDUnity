@@ -34,6 +34,7 @@ public class UIButton : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && entered)
         {
             clickResult?.Invoke(name);
+            entered = false;
         }
     }
 }
