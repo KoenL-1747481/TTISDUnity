@@ -17,7 +17,6 @@ public class SpawnPlayer : MonoBehaviour
 
     List<AvatarController> playerAvatarControllers = new List<AvatarController>();
 
-    public Action addPlayer;
 
     List<int> playerIDs = new List<int>();
     // Start is called before the first frame update
@@ -35,16 +34,9 @@ public class SpawnPlayer : MonoBehaviour
     public void addNewPlayer(int playerID, string instrumentName)
     {
         playerIDs.Add(playerID);
-        addPlayer = new Action(() => { spawnPlayer(playerIDs.Count-1, instrumentName); });
-    }
-
-    private void Update()
-    {
-        if (addPlayer != null)
-        {
-            addPlayer();
-            addPlayer = null;
-        }
+        ThreadManager.ExecuteOnMainThread(() => { 
+            spawnPlayer(playerIDs.Count-1, instrumentName); 
+        });
     }
 
     public void updateAvatar(int id, List<Quaternion> newBoneRotations)
