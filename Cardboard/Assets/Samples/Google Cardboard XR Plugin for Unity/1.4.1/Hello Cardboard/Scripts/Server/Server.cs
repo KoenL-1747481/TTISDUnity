@@ -58,7 +58,6 @@ public class Server
                 }
                 /* Check if we have spawned the cardboard in the scene with this id */
                 List<int> cardboard_ids = new List<int>();
-                Debug.Log("Cardboard ids: " + cardboard_ids.ToString());
                 Debug.Log("Received cardboard id: " + _clientId);
                 foreach (Player c in SessionManager.cardboards)
                 {
