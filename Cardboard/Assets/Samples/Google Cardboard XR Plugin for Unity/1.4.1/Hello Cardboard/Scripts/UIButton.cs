@@ -31,7 +31,7 @@ public class UIButton : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && entered)
+        if (Input.GetMouseButtonUp(0) && entered)
         {
             clickResult?.Invoke(name);
             entered = false;
