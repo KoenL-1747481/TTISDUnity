@@ -11,6 +11,7 @@ public class UIButton : MonoBehaviour
     [SerializeField] private TextMeshProUGUI t;
     private Color startColor;
     private bool entered = false;
+    private bool heldButton = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,10 +32,12 @@ public class UIButton : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonUp(0) && entered)
+        if (Input.GetMouseButton(0) && entered && !heldButton)
         {
             clickResult?.Invoke(name);
             entered = false;
+            heldButton = true;
         }
+        heldButton = false;
     }
 }
