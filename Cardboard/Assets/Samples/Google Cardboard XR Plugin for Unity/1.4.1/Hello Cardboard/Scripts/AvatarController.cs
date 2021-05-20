@@ -179,6 +179,21 @@ public class AvatarController : MonoBehaviour
 		// re-calibrate the position offset
 		offsetCalibrated = false;
 	}
+
+
+
+	public void updateAvatar(List<Quaternion> newBoneRotations)
+	{
+		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
+		{
+			if (!bones[boneIndex])
+				continue;
+
+			bones[boneIndex].rotation = newBoneRotations[boneIndex];
+		}
+	}
+
+
 	
 	// Apply the rotations tracked by kinect to the joints.
 	protected void TransformBone(uint userId, KinectWrapper.NuiSkeletonPositionIndex joint, int boneIndex, bool flip)
