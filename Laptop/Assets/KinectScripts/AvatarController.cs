@@ -125,7 +125,7 @@ public class AvatarController : MonoBehaviour
 				}
 			}
 		}
-		//pompviaudp(lijst);
+		SessionManager.SendKinectToCardboards(newBoneRotations);
 	}
 
 	Quaternion getBoneRotation(int boneIndex)

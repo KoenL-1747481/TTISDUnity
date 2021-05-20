@@ -101,7 +101,7 @@ public class SessionManager : MonoBehaviour
         }
     }
 
-    public static void SendKinectToCardboards()
+    public static void SendKinectToCardboards(List<Quaternion> boneRotations)
     {
         // TODO
     }
