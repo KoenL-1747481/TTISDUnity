@@ -47,14 +47,13 @@ public class Server
         {
             Debug.Log("Someone is already recording!");
             // TODO: Send bool false 
-            //connection.Send(new RecordResponse(req, false, "Someone is already recording!", BPM, Bars));
+            ServerSend.RecordResponse(clientId, false, "Someone is already recording!", BPM, Bars);
         }
         else
         {
             Debug.Log("Recording is allowed.");
             RecordingPlayer = clients[clientId];
-            // TODO: Send bool true
-            //connection.Send(new RecordResponse(req, true, "", BPM, Bars));
+            ServerSend.RecordResponse(clientId, true, "OK", BPM, Bars);
 
             // If no SendLoopRequest after certain time, then timeout and reset current record request
             double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;

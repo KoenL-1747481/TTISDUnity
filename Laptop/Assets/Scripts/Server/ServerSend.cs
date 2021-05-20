@@ -113,5 +113,18 @@ public class ServerSend
             SendTCPData(_toClient, _packet);
         }
     }
+
+    public static void RecordResponse(int _toClient, bool OK, string msg, int BPM, int bars)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.loopRecordResponse))
+        {
+            _packet.Write(OK);
+            _packet.Write(msg);
+            _packet.Write(BPM);
+            _packet.Write(bars);
+
+            SendTCPData(_toClient, _packet);
+        }
+    }
     #endregion
 }

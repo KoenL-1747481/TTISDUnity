@@ -14,7 +14,7 @@ public class SessionManager : MonoBehaviour
     public static Client clientServer;
     public static Dictionary<int, Player> players = new Dictionary<int, Player>();
     private static Dictionary<Player, UdpClient> laptopPeers = new Dictionary<Player, UdpClient>(); // Peers to send audio data to
-    private static Dictionary<Player, Client> cardboards = new Dictionary<Player, Client>(); // Cardboards to send kinect data to
+    public static Dictionary<Player, Client> cardboards = new Dictionary<Player, Client>(); // Cardboards to send kinect data to
 
     private static UdpClient p2p_listener; // Listener that receives peer audio data
     private static bool listening;
@@ -99,11 +99,6 @@ public class SessionManager : MonoBehaviour
                 Debug.Log(e.ToString());
             }
         }
-    }
-
-    public static void SendKinectToCardboards(List<Quaternion> boneRotations)
-    {
-        // TODO
     }
 
     #region loop_stuff
