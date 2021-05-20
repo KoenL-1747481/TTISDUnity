@@ -13,8 +13,7 @@ public class SpawnPlayer : MonoBehaviour
     [SerializeField] private List<GameObject> playerModels;
     private List<int> chosenPlayerIndexes = new List<int>();
     
-    List<AvatarController> playerAvatarControllers = new List<AvatarController>();
-
+    List<AvatarControllerClassic> playerAvatarControllers = new List<AvatarControllerClassic>();
 
     List<int> playerIDs = new List<int>();
 
@@ -28,7 +27,6 @@ public class SpawnPlayer : MonoBehaviour
             spawnPointCameras.Add(child.Find("Camera").gameObject);
             spawnPointCameras[spawnPointCameras.Count - 1].SetActive(false);
         }
-        //spawnPlayer(0, "Keyboard");
     }
 
     public void addNewPlayer(int playerID, string instrumentName)
@@ -69,7 +67,6 @@ public class SpawnPlayer : MonoBehaviour
                     spawnPointCameras[indexOfPlayerID].SetActive(true);
                     firstPlayer = false;
                 }
-
                 break;
             }
             i++;

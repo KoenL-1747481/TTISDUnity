@@ -189,7 +189,10 @@ public class AvatarController : MonoBehaviour
 			if (!bones[boneIndex])
 				continue;
 
-			bones[boneIndex].rotation = newBoneRotations[boneIndex];
+			if (boneIndex2JointMap.ContainsKey(boneIndex))
+			{
+				bones[boneIndex].rotation = newBoneRotations[boneIndex];
+			}
 		}
 	}
 
