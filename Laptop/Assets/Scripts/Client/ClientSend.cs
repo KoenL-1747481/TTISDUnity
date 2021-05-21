@@ -78,11 +78,20 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    #region loop_packets
-    public static void SendLoopRecordRequest()
+    public static void LoopRecordRequest()
     {
         using (Packet _packet = new Packet((int)ClientPackets.loopRecordRequest))
         {
+            SendTCPDataToServer(_packet);
+        }
+    }
+
+    #region loop_packets
+    public static void SendLoopRequest(float[] audio)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendLoopRequest))
+        {
+            _packet.Write(audio);
             SendTCPDataToServer(_packet);
         }
     }

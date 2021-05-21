@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using TTISDProject;
 using UnityEngine;
 
 public class ClientHandle : MonoBehaviour
@@ -39,5 +40,43 @@ public class ClientHandle : MonoBehaviour
         string _IP = _packet.ReadString();
 
         SessionManager.instance.AddLaptop(new Player(_id, _username, _IP));
+    }
+
+    public static void LoopRecordResponse(Packet _packet)
+    {
+        Debug.Log("Received record response.");
+        bool OK = _packet.ReadBool();
+        string msg = _packet.ReadString();
+        int BPM = _packet.ReadInt();
+        int bars = _packet.ReadInt();
+
+        if (OK)
+        {
+            LoopRecorder.StartRecording(BPM, bars);
+        } else
+        {
+            Debug.Log(msg);
+        }
+    }
+
+    public static void SendLoopResponse(Packet _packet)
+    {
+        Debug.Log("Received SendLoopResponse");
+        bool OK = _packet.ReadBool();
+        if (OK)
+        {
+            AudioHandler.AddLoop(LoopRecorder.recorded_audio);
+        } else
+        {
+            string msg = _packet.ReadString();
+            Debug.Log(msg);
+        }
+    }
+
+    public static void AddLoop(Packet _packet)
+    {
+        Debug.Log("Received AddLoop");
+        float[] audio = _packet.ReadFloats();
+        AudioHandler.AddLoop(audio);
     }
 }

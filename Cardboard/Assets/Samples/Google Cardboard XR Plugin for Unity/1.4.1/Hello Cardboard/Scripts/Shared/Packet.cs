@@ -11,6 +11,8 @@ public enum ServerPackets
     addCardboard,
     addLaptop,
     loopRecordResponse,
+    sendLoopResponse,
+    addLoop,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -20,6 +22,7 @@ public enum ClientPackets
     welcomeReceivedLaptop,
     kinectData,
     loopRecordRequest,
+    sendLoopRequest,
 }
 
 public class Packet : IDisposable

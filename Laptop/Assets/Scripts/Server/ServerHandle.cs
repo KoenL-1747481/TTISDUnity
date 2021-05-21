@@ -31,9 +31,16 @@ public class ServerHandle
         Server.clients[_fromClient].SendIntoSession(_username, _instrumentType);
     }
 
-    public static void LoopRecordRequestReceived(int _fromClient, Packet _packet)
+    public static void LoopRecordRequest(int _fromClient, Packet _packet)
     {
+        Debug.Log("LoopRecordRequest received.");
         Server.OnRecordRequest(_fromClient);
     }
-
+    
+    public static void SendLoopRequest(int _fromClient, Packet _packet)
+    {
+        Debug.Log("LoopRecordRequest received.");
+        float[] audio = _packet.ReadFloats();
+        Server.OnSendLoopRequest(_fromClient, audio);
+    }
 }

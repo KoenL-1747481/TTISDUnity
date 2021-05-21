@@ -11,6 +11,8 @@ public enum ServerPackets
     addCardboard,
     addLaptop,
     loopRecordResponse,
+    sendLoopResponse,
+    addLoop,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -20,6 +22,7 @@ public enum ClientPackets
     welcomeReceivedLaptop,
     kinectData,
     loopRecordRequest,
+    sendLoopRequest,
 }
 
 public class Packet : IDisposable
@@ -149,6 +152,15 @@ public class Packet : IDisposable
     public void Write(float _value)
     {
         buffer.AddRange(BitConverter.GetBytes(_value));
+    }
+
+    public void Write(float[] _value)
+    {
+        Write(_value.Length);
+        foreach (float f in _value)
+        {
+            Write(f);
+        }
     }
     /// <summary>Adds a bool to the packet.</summary>
     /// <param name="_value">The bool to add.</param>
@@ -317,6 +329,17 @@ public class Packet : IDisposable
         {
             throw new Exception("Could not read value of type 'float'!");
         }
+    }
+
+    public float[] ReadFloats(bool _moveReadPos = true)
+    {
+        int count = ReadInt(_moveReadPos);
+        float[] values = new float[count];
+        for (int i = 0; i < count; i++)
+        {
+            values[i] = ReadFloat(_moveReadPos);
+        }
+        return values;
     }
 
     /// <summary>Reads a bool from the packet.</summary>

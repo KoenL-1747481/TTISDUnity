@@ -47,13 +47,13 @@ public class Server
         {
             Debug.Log("Someone is already recording!");
             // TODO: Send bool false 
-            ServerSend.RecordResponse(clientId, false, "Someone is already recording!", BPM, Bars);
+            ServerSend.LoopRecordResponse(clientId, false, "Someone is already recording!", BPM, Bars);
         }
         else
         {
             Debug.Log("Recording is allowed.");
             RecordingPlayer = clients[clientId];
-            ServerSend.RecordResponse(clientId, true, "OK", BPM, Bars);
+            ServerSend.LoopRecordResponse(clientId, true, "OK", BPM, Bars);
 
             // If no SendLoopRequest after certain time, then timeout and reset current record request
             double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
@@ -67,6 +67,29 @@ public class Server
                 Debug.Log("Record request timed out!");
             };
             RecordTimeoutTimer.Start();
+        }
+    }
+
+    public static void OnSendLoopRequest(int clientId, float[] audio) 
+    {
+        if (clientId == RecordingPlayer.id)
+        {
+            Debug.Log("Players match.");
+            RecordingPlayer = null;
+            RecordTimeoutTimer?.Stop();
+            RecordTimeoutTimer?.Close();
+
+            // Send response to the requester
+            ServerSend.SendLoopResponse(clientId, true, "OK");
+            // Send loop to everyone except the requester
+            ServerSend.AddLoop(clientId, audio);
+            // Save the loop server side as well, for if someone joins after loops are recorded.
+            // TODO: doesn't matter atm
+        }
+        else
+        {
+            Debug.Log("Players don't match.");
+            ServerSend.SendLoopResponse(clientId, false, "You didn't initiate a record request, or the request timed out.");
         }
     }
 
@@ -178,7 +201,8 @@ public class Server
             {
                 { (int)ClientPackets.welcomeReceivedCardboard, ServerHandle.WelcomeReceivedCardboard },
                 { (int)ClientPackets.welcomeReceivedLaptop, ServerHandle.WelcomeReceivedLaptop},
-                { (int)ClientPackets.loopRecordRequest, ServerHandle.LoopRecordRequestReceived},
+                { (int)ClientPackets.loopRecordRequest, ServerHandle.LoopRecordRequest},
+                { (int)ClientPackets.sendLoopRequest, ServerHandle.SendLoopRequest},
             };
         Debug.Log("Initialized packets.");
     }

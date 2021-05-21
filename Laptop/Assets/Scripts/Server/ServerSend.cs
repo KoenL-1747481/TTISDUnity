@@ -115,7 +115,7 @@ public class ServerSend
         }
     }
 
-    public static void RecordResponse(int _toClient, bool OK, string msg, int BPM, int bars)
+    public static void LoopRecordResponse(int _toClient, bool OK, string msg, int BPM, int bars)
     {
         using (Packet _packet = new Packet((int)ServerPackets.loopRecordResponse))
         {
@@ -127,5 +127,27 @@ public class ServerSend
             SendTCPData(_toClient, _packet);
         }
     }
+
+    public static void SendLoopResponse(int _toClient, bool OK, string msg)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.sendLoopResponse))
+        {
+            _packet.Write(OK);
+            _packet.Write(msg);
+
+            SendTCPData(_toClient, _packet);
+        }
+    }
+
+    public static void AddLoop(int _exceptClient, float[] audio)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.sendLoopResponse))
+        {
+            _packet.Write(audio);
+
+            SendTCPDataToAll(_exceptClient, _packet);
+        }
+    }
+
     #endregion
 }

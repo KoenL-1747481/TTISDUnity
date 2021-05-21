@@ -18,6 +18,7 @@ namespace TTISDProject
         private static Timer ClickTimer;
 
         private static float[] record_buffer = new float[10000000];
+        public static float[] recorded_audio;
         private static int amount_recorded = 0;
         private static object record_lock = new object();
 
@@ -54,7 +55,7 @@ namespace TTISDProject
                 {
                     StartedRecording = false;
                     Recording = false;
-                    float[] recorded_audio = new float[amount_recorded];
+                    recorded_audio = new float[amount_recorded];
                     Array.Copy(record_buffer, 0, recorded_audio, 0, amount_recorded);
                     SessionManager.TrySendLoop(recorded_audio);
                 }

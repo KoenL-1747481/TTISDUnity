@@ -44,6 +44,9 @@ public class Client
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
             { (int)ServerPackets.addLaptop, ClientHandle.AddLaptop },
             { (int)ServerPackets.addCardboard, ClientHandle.AddCardboard},
+            { (int)ServerPackets.loopRecordResponse, ClientHandle.LoopRecordResponse},
+            { (int)ServerPackets.sendLoopResponse, ClientHandle.SendLoopResponse},
+            { (int)ServerPackets.addLoop, ClientHandle.AddLoop},
         };
         Debug.Log("Initialized packets.");
     }

@@ -106,24 +106,7 @@ public class SessionManager : MonoBehaviour
     {
         if (!LoopRecorder.IsRecording() && clientServer != null)
         {
-            ClientSend.SendLoopRecordRequest();
-            /*try
-            {
-                response = await clientServer.SendAsync<RecordResponse>(new RecordRequest());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return;
-            }
-            if (response.OK)
-            {
-                LoopRecorder.StartRecording(response.BPM, response.Bars);
-            }
-            else
-            {
-                Console.WriteLine(response.Message);
-            }*/
+            ClientSend.LoopRecordRequest();
         }
     }
 
@@ -132,19 +115,9 @@ public class SessionManager : MonoBehaviour
         Console.WriteLine("Audio recorded. Size: " + audio.Length);
         if (clientServer != null)
         {
-            // TODO: Send the loop to server
-            //response = await clientServer.SendAsync<SendLoopResponse>(new SendLoopRequest(audio));
-
-            // TODO: handle the response
-            //AudioHandler.AddLoop(audio);
+            // Send the loop to server
+            ClientSend.SendLoopRequest(audio);
         }
-    }
-
-    // This request contains a new loop that needs to be played
-    private static void LoopUpdateRequestReceived(/*LoopUpdate req, Connection connection*/)
-    {
-        // TODO: when new loop has been recorded, handle packet
-        //AudioHandler.AddLoop(req.Audio);
     }
     #endregion
 
