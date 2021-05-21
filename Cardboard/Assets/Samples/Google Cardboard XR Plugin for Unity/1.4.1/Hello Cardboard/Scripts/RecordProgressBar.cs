@@ -38,7 +38,7 @@ public class RecordProgressBar : MonoBehaviour
     {
         if (goingUp)
         {
-            changeProgress(0.1f);
+            changeProgress(0.001f);
             if (slider.value >= 1f)
                 goingUp = false;
         } 
