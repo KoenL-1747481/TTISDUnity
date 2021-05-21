@@ -33,6 +33,14 @@ public class RecordProgressBar : MonoBehaviour
         }
     }
 
+    public void reset()
+    {
+        slider.value = 0;
+        foreach (GameObject bar in bars)
+            bar.GetComponent<Image>().color = new Color(0,0,0);
+        goingUp = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -46,7 +54,11 @@ public class RecordProgressBar : MonoBehaviour
         {
             changeProgress(-0.1f);
             if (slider.value <= 0f)
+            {
+                reset();
                 goingUp = true;
+            }
+                
         }
         
     }
