@@ -56,15 +56,18 @@ public class ClientSend : MonoBehaviour
         if (cardboard_id == 0) // If we didn't find matching cardboard, don't send kinect data
             return;
 
+        //KinectData kinectData = new KinectData(cardboard_id, boneRotations);
+        //string json_string = JsonUtility.ToJson(kinectData);
+        //Debug.Log(json_string);
         using (Packet _packet = new Packet((int)ClientPackets.kinectData))
         {
             _packet.Write(boneRotations);
             _packet.WriteLength();
+            _packet.InsertInt(cardboard_id); // Insert the cardboard's ID at the start of the packet
             foreach (UdpClient cardboard in SessionManager.cardboards.Values)
             {
                 try
                 {
-                    _packet.InsertInt(cardboard_id); // Insert the cardboard's ID at the start of the packet
                     cardboard.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
                 }
                 catch (Exception _ex)
