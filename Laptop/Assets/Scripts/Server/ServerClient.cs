@@ -138,7 +138,6 @@ public class ServerClient
                     }
                 }
             }
-
             if (_packetLength <= 1)
             {
                 return true; // Reset receivedData instance to allow it to be reused
