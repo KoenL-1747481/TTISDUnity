@@ -14,3 +14,11 @@ Laptop/Assets/Packages/*
 
 Laptop/Assets/Packages/Microsoft.Kinect.2.0.1410.19000.meta
 Laptop/Packages/packages-lock.json
+Laptop/ProjectSettings/ProjectVersion.txt
+Laptop/Packages/packages-lock.json
+Laptop/Packages/manifest.json
+Cardboard/Packages/packages-lock.json
+Cardboard/ProjectSettings/ProjectVersion.txt
+Cardboard/Packages/manifest.json
+Cardboard/Assets/XR/Settings/AR Core Settings.asset.meta
+Cardboard/Assets/XR/Settings/AR Core Settings.asset
