@@ -18,28 +18,36 @@ public class RecordProgressBar : MonoBehaviour
                 bars.Add(child.gameObject);
     }
 
+    public void changeProgress(float value)
+    {
+        slider.value += value;
+        float width = transform.GetComponent<RectTransform>().sizeDelta.x;
+        foreach (GameObject bar in bars)
+        {
+            float barXPos = bar.GetComponent<RectTransform>().anchoredPosition.x + width / 2;
+
+            if ((slider.value * 100) > (100 / (width / barXPos)) && bar.GetComponent<Image>().color != passedBarColor)
+            {
+                bar.GetComponent<Image>().color = passedBarColor;
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (goingUp)
         {
-            slider.value += 0.001f;
+            changeProgress(0.1f);
             if (slider.value >= 1f)
                 goingUp = false;
         } 
         else
         {
-            slider.value -= 0.001f;
+            changeProgress(-0.1f);
             if (slider.value <= 0f)
                 goingUp = true;
         }
-        float width = transform.GetComponent<RectTransform>().sizeDelta.x;
-        foreach (GameObject bar in bars)
-        {
-            float barXPos = bar.GetComponent<RectTransform>().anchoredPosition.x + width/2;
-
-            if ((slider.value*100) > (width / barXPos) && bar.GetComponent<Image>().color != passedBarColor)
-                bar.GetComponent<Image>().color = passedBarColor;
-        }
+        
     }
 }
