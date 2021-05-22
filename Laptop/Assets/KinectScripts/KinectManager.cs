@@ -1129,7 +1129,6 @@ public class KinectManager : MonoBehaviour
 			{
 				ProcessSkeleton();
 			}
-
 			// Update player 1's models if he/she is calibrated and the model is active.
 			if (Player1Calibrated)
 			{
