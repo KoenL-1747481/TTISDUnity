@@ -37,13 +37,14 @@ public class SessionManager : MonoBehaviour
 
     public void Start()
     {
+        Application.targetFrameRate = 60;
+
         clientServer = new Client(Constants.SERVER_IP, Constants.SERVER_PORT);
         clientServer.ConnectToServer();
         p2p_listener = new UdpClient(Constants.P2P_PORT);
 
         listening = true;
         ThreadPool.QueueUserWorkItem(AudioListenerThread);
-
     }
 
     private static void AudioListenerThread(object state)
