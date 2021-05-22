@@ -77,7 +77,7 @@ namespace TTISDProject
 
         public static void SetVolume(float value)
         {
-            volumeChanger.Volume = value;
+            volumeChanger.Volume = 2*value;
         }
 
         public static void StopLoop()
