@@ -41,7 +41,7 @@ public class ClientSend : MonoBehaviour
         //Debug.Log("Sending kinect data...");
         int cardboard_id = 0;
         string myIP = SessionManager.players[SessionManager.clientServer.myId].IP;
-        print("My ip: " + myIP);
+   
         // Find the id of the cardboard matching this laptop
         foreach (Player c in SessionManager.cardboards.Keys)
         {
