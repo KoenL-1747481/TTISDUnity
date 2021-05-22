@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using System.Timers;
 using TTISDProject;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ClientHandle : MonoBehaviour
 {
+    private static Timer timer;
+
     public static void Welcome(Packet _packet)
     {
         string _msg = _packet.ReadString();
@@ -78,5 +82,26 @@ public class ClientHandle : MonoBehaviour
         float[] audio = _packet.ReadFloats();
         Debug.Log("Received AddLoop. Audio Length: " + audio.Length);
         AudioHandler.AddLoop(audio);
+    }
+
+    public static void StartedRecording(Packet _packet)
+    {
+        int clientId = _packet.ReadInt();
+        int BPM = _packet.ReadInt();
+        int Bars = _packet.ReadInt();
+
+        RecordButton.btn.interactable = false;
+        double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
+        double timeoutInterval = clickInterval * 4.0 * (Bars + 1);
+        timer = new Timer(timeoutInterval);
+        timer.Elapsed += (s_, e_) =>
+        {
+            ThreadManager.ExecuteOnMainThread(() =>
+            {
+                RecordButton.btn.interactable = true;
+            });
+        };
+        timer.AutoReset = false;
+        timer.Start();
     }
 }

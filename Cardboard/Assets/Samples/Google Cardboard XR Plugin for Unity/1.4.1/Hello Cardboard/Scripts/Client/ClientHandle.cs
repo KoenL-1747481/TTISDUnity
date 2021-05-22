@@ -32,4 +32,16 @@ public class ClientHandle : MonoBehaviour
 
         SessionManager.instance.AddCardboard(new Player(_id, _username, _IP, _instrumentType));
     }
+
+    public static void StartedRecording(Packet _packet)
+    {
+        int clientId = _packet.ReadInt();
+        int BPM = _packet.ReadInt();
+        int bars = _packet.ReadInt();
+
+        double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
+        double timeoutInterval = clickInterval * 4.0 * (bars + 1);
+
+        // TODO: de nieuwe gui
+    }
 }

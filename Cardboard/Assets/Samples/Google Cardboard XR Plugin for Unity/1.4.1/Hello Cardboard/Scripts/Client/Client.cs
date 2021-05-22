@@ -43,6 +43,7 @@ public class Client
         {
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
             { (int)ServerPackets.addCardboard, ClientHandle.AddCardboard },
+            { (int)ServerPackets.startedRecording, ClientHandle.StartedRecording},
         };
         Debug.Log("Initialized packets.");
     }

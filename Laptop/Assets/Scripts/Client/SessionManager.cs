@@ -111,7 +111,7 @@ public class SessionManager : MonoBehaviour
         }
     }
 
-    public static void TrySendLoop(float[] audio)
+    public void TrySendLoop(float[] audio)
     {
         Console.WriteLine("Audio recorded. Size: " + audio.Length);
         if (clientServer != null)

@@ -55,9 +55,13 @@ namespace TTISDProject
                 {
                     StartedRecording = false;
                     Recording = false;
+                    ThreadManager.ExecuteOnMainThread(() =>
+                    {
+                        RecordButton.btn.interactable = true;
+                    });
                     recorded_audio = new float[amount_recorded];
                     Array.Copy(record_buffer, 0, recorded_audio, 0, amount_recorded);
-                    SessionManager.TrySendLoop(recorded_audio);
+                    SessionManager.instance.TrySendLoop(recorded_audio);
                 }
             }
         }
@@ -66,6 +70,7 @@ namespace TTISDProject
             if (!StartedRecording && !Recording)
             {
                 AudioHandler.StopLoop();
+                RecordButton.btn.interactable = false;
                 StartedRecording = true;
                 BPM = bpm;
                 Bars = bars;

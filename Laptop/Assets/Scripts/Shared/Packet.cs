@@ -10,9 +10,13 @@ public enum ServerPackets
     welcome = 1,
     addCardboard,
     addLaptop,
+    startedRecording,
     loopRecordResponse,
     sendLoopResponse,
     addLoop,
+    startAddLoopTCP,
+    partAddLoopUDP,
+    endAddLoopTCP,
 }
 
 /// <summary>Sent from client to server.</summary>

@@ -155,5 +155,17 @@ public class ServerSend
         }
     }
 
+    public static void StartedRecording(int _exceptClient, int BPM, int Bars)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.startedRecording))
+        {
+            _packet.Write(_exceptClient);
+            _packet.Write(BPM);
+            _packet.Write(Bars);
+
+            SendTCPDataToAll(_exceptClient, _packet);
+        }
+    }
+
     #endregion
 }

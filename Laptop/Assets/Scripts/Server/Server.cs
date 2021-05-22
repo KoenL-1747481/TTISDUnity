@@ -53,8 +53,10 @@ public class Server
         {
             Debug.Log("Recording is allowed.");
             RecordingPlayer = clients[clientId];
+            // Send loop record response to the requester
             ServerSend.LoopRecordResponse(clientId, true, "OK", BPM, Bars);
-
+            // Send loop record started to everyone but the requester
+            ServerSend.StartedRecording(clientId, BPM, Bars);
             // If no SendLoopRequest after certain time, then timeout and reset current record request
             /*double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
             double timeoutInterval = clickInterval * 4.0 * (Bars + 3.0);
