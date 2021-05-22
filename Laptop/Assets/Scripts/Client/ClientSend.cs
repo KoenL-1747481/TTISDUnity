@@ -93,7 +93,7 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)ClientPackets.sendLoopRequest))
         {
             _packet.Write(audio);
-            SendUDPDataToServer(_packet);
+            SendTCPDataToServer(_packet);
         }
     }
     #endregion
