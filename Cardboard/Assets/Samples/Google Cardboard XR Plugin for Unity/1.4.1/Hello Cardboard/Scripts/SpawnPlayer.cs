@@ -14,7 +14,7 @@ public class SpawnPlayer : MonoBehaviour
     private List<int> chosenPlayerIndexes = new List<int>();
     
     List<AvatarControllerClassic> playerAvatarControllers = new List<AvatarControllerClassic>();
-
+    List<GameObject> players = new List<GameObject>();
 
     List<int> playerIDs = new List<int>();
 
@@ -53,6 +53,11 @@ public class SpawnPlayer : MonoBehaviour
         
     }
 
+    public GameObject getPlayerByID(int id)
+    {
+        return players[playerIDs.IndexOf(id)];
+    }
+
     public void spawnPlayer(int playerID, string instrumentName)
     {
         int i = 0;
@@ -65,6 +70,7 @@ public class SpawnPlayer : MonoBehaviour
                 playerPos -= spawnPoints[indexOfPlayerID].forward*0.3f;
                 GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[indexOfPlayerID].position, spawnPoints[indexOfPlayerID].rotation);
                 GameObject player = Instantiate(playerModels[playerID], playerPos, spawnPoints[indexOfPlayerID].rotation);
+                players.Add(player);
 
                 playerAvatarControllers.Add(player.GetComponent<AvatarControllerClassic>());
                 Guitar g = instrument.GetComponent<Guitar>();
