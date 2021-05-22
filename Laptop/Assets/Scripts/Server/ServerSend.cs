@@ -141,11 +141,17 @@ public class ServerSend
 
     public static void AddLoop(int _exceptClient, float[] audio)
     {
-        using (Packet _packet = new Packet((int)ServerPackets.sendLoopResponse))
+        using (Packet _packet = new Packet((int)ServerPackets.addLoop))
         {
             _packet.Write(audio);
-
-            SendTCPDataToAll(_exceptClient, _packet);
+            _packet.WriteLength();
+            foreach (ServerClient c in Server.clients.Values)
+            {
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                {
+                    Server.clients[c.id].tcp.SendData(_packet);
+                }
+            }
         }
     }
 
