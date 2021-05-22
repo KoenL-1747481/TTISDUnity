@@ -30,7 +30,7 @@ namespace TTISDProject
         private static object pause_lock = new object();
 
         private static float[] float_buffer = new float[1024 * 16];
-
+        private static VolumeSampleProvider volumeChanger;
         /* Intialize stuff */
         public void Start()
         {
@@ -62,7 +62,7 @@ namespace TTISDProject
             var compressor = new SimpleCompressorEffect(Mixer);
             compressor.Enabled = true;
             compressor.MakeUpGain = 0;
-            var volumeChanger = new VolumeSampleProvider(compressor);
+            volumeChanger = new VolumeSampleProvider(compressor);
             volumeChanger.Volume = 1.0f;
             var audioOut = new SampleToWaveProvider16(volumeChanger);
 
@@ -75,10 +75,9 @@ namespace TTISDProject
             allowPlayerAudio = true;
         }
 
-        public static void SetVolume(float percent)
+        public static void SetVolume(float value)
         {
-            //TODO: fix de rommel asio
-            AsioDriver.Volume = percent;
+            volumeChanger.Volume = value;
         }
 
         public static void StopLoop()
