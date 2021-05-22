@@ -62,11 +62,9 @@ namespace TTISDProject
             var compressor = new SimpleCompressorEffect(Mixer);
             compressor.Enabled = true;
             compressor.MakeUpGain = 0;
-            //compressor.Attack = 0.1;
-            //compressor.Ratio = 10;
-            //compressor.Threshold = -50;
-            //compressor.Release = 1;*/
-            var audioOut = new SampleToWaveProvider16(compressor);
+            var volumeChanger = new VolumeSampleProvider(compressor);
+            volumeChanger.Volume = 1.0f;
+            var audioOut = new SampleToWaveProvider16(volumeChanger);
 
             /* Init AsioOut for recording and playback */
             AsioDriver = new AsioOut(driverName);
@@ -175,7 +173,6 @@ namespace TTISDProject
                 BufferedSampleProvider b;
                 if (PlayerAudio.TryGetValue(player_id, out b))
                 {
-                    Debug.Log("PLAYING AUDIO!");
                     b.AddSamples(audio, 0, count);
                 }
             }

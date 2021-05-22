@@ -75,8 +75,8 @@ public class ClientHandle : MonoBehaviour
 
     public static void AddLoop(Packet _packet)
     {
-        Debug.Log("Received AddLoop");
         float[] audio = _packet.ReadFloats();
+        Debug.Log("Received AddLoop. Audio Length: " + audio.Length);
         AudioHandler.AddLoop(audio);
     }
 }

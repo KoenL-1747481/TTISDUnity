@@ -213,7 +213,6 @@ public class ServerClient
         string player_ip = ((IPEndPoint)tcp.socket.Client.RemoteEndPoint).Address.ToString();
         if (player_ip == "192.168.0.1" || player_ip == "127.0.0.1")
             player_ip = Constants.SERVER_IP;
-        Debug.Log("Player IP: " + player_ip);
 
         player = new Player(id, _playerName, player_ip, _instrumentType);
 

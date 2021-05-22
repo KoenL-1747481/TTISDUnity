@@ -41,6 +41,7 @@ public class ServerHandle
     {
         Debug.Log("LoopRecordRequest received.");
         float[] audio = _packet.ReadFloats();
+        Debug.Log("Receiving Loop. Audio length: " + audio.Length);
         Server.OnSendLoopRequest(_fromClient, audio);
     }
 }

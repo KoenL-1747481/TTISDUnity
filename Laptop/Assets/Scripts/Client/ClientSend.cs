@@ -89,10 +89,11 @@ public class ClientSend : MonoBehaviour
     #region loop_packets
     public static void SendLoopRequest(float[] audio)
     {
+        Debug.Log("Sending Loop. Audio length: " + audio.Length);
         using (Packet _packet = new Packet((int)ClientPackets.sendLoopRequest))
         {
             _packet.Write(audio);
-            SendTCPDataToServer(_packet);
+            SendUDPDataToServer(_packet);
         }
     }
     #endregion

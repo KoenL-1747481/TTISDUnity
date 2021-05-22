@@ -55,7 +55,6 @@ public class SessionManager : MonoBehaviour
             while (listening)
             {
                 byte[] audio = p2p_listener.Receive(ref endpoint);
-                Debug.Log("Received audio");
                 // Get the player from the IP
                 int peer_id = -1;
                 foreach (Player p in laptopPeers.Keys)
@@ -91,7 +90,6 @@ public class SessionManager : MonoBehaviour
         {
             try
             {
-                Debug.Log("Sending audio to: " + peer.Client.RemoteEndPoint.ToString());
                 peer.Send(byte_buffer, amount_bytes);
             }
             catch (Exception e)
