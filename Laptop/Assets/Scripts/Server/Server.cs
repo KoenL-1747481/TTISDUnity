@@ -56,7 +56,7 @@ public class Server
             ServerSend.LoopRecordResponse(clientId, true, "OK", BPM, Bars);
 
             // If no SendLoopRequest after certain time, then timeout and reset current record request
-            double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
+            /*double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
             double timeoutInterval = clickInterval * 4.0 * (Bars + 3.0);
             RecordTimeoutTimer = new Timer(timeoutInterval);
             RecordTimeoutTimer.Elapsed += (s, e_) =>
@@ -66,7 +66,7 @@ public class Server
                 RecordTimeoutTimer.Close();
                 Debug.Log("Record request timed out!");
             };
-            RecordTimeoutTimer.Start();
+            RecordTimeoutTimer.Start();*/
         }
     }
 
@@ -76,8 +76,8 @@ public class Server
         {
             Debug.Log("Players match.");
             RecordingPlayer = null;
-            RecordTimeoutTimer?.Stop();
-            RecordTimeoutTimer?.Close();
+            /*RecordTimeoutTimer?.Stop();
+            RecordTimeoutTimer?.Close();*/
 
             // Send response to the requester
             ServerSend.SendLoopResponse(clientId, true, "OK");
