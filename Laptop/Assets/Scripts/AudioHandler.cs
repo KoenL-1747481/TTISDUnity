@@ -71,8 +71,14 @@ namespace TTISDProject
             AsioDriver.AudioAvailable += OnAsioOutAudioAvailable;
             AsioDriver.InitRecordAndPlayback(audioOut, INPUT_CHANNELS, SAMPLE_RATE);
             AsioDriver.Play();
-
+            
             allowPlayerAudio = true;
+        }
+
+        public static void SetVolume(float percent)
+        {
+            //TODO: fix de rommel asio
+            AsioDriver.Volume = percent;
         }
 
         public static void StopLoop()
