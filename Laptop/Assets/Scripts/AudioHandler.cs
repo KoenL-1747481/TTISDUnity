@@ -195,7 +195,8 @@ namespace TTISDProject
                 b.AddSamples(float_buffer, 0, amount_samples);
             }
             // Send to peers
-            SessionManager.SendAudioToPeers(float_buffer, amount_samples);
+            if (!LoopRecorder.IsRecording())
+                SessionManager.SendAudioToPeers(float_buffer, amount_samples);
             // Send to loop recorder
             LoopRecorder.HandleAudio(float_buffer, amount_samples);
         }

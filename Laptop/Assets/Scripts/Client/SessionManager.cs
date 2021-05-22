@@ -55,6 +55,8 @@ public class SessionManager : MonoBehaviour
             while (listening)
             {
                 byte[] audio = p2p_listener.Receive(ref endpoint);
+                if (LoopRecorder.IsRecording()) // Don't receive while recording
+                    continue;
                 // Get the player from the IP
                 int peer_id = -1;
                 foreach (Player p in laptopPeers.Keys)
