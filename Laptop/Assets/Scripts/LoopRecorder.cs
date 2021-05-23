@@ -81,17 +81,18 @@ namespace TTISDProject
                 double clickInterval = (1.0 / (bpm / 60.0)) * 1000.0;
                 var timer = new Timer(clickInterval);
                 int clicks = 0;
+                AudioHandler.PlayClickSound();
                 timer.Elapsed += (s, e_) =>
                 {
                     clicks++;
-                    if (clicks == 5)
+                    if (clicks == 4)
                     { // Begin recording at 5th click
                         Debug.Log("Started recording.");
                         AudioHandler.StartLoop();
                         Recording = true;
                         AudioHandler.PlayClickSound();
                     }
-                    else if ((clicks - 1) / Bars == (Bars + 1))
+                    else if ((clicks) / Bars == (Bars + 1))
                     { // End recording at start of bar "Bars + 1" 
                         Debug.Log("Stopped recording.");
                         timer.Stop();

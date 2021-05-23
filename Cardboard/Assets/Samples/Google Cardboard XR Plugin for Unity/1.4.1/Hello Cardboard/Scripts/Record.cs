@@ -79,7 +79,7 @@ public class Record : MonoBehaviour
         float timeOf1Bar = (float)(timeoutInterval / (totalBarCount + 1));
         reset(timeOf1Bar);
 
-        for (int i=1;i< totalBarCount + 1;i++)
+        for (int i=1; i< totalBarCount + 1; i++)
         {
             StartCoroutine(NewBar(i, totalBarCount, timeOf1Bar));
         }
