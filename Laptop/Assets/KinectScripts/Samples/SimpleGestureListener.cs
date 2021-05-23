@@ -74,11 +74,12 @@ public class SimpleGestureListener : MonoBehaviour, KinectGestures.GestureListen
 	{
 		string sGestureText = gesture + " detected";
 
-		//start recording
-		if (gesture == KinectGestures.Gestures.RaiseRightHand)
-        {
+
+		if (gesture == KinectGestures.Gestures.RaiseRightHand) //start recording
 			SessionManager.instance.TryRecordLoop();
-		}
+		else if (gesture == KinectGestures.Gestures.RaiseLeftHand) //undo recording
+			print("undo diggema");
+
 		print(sGestureText);
 		if (gesture == KinectGestures.Gestures.Click)
 			sGestureText += string.Format(" at ({0:F1}, {1:F1})", screenPos.x, screenPos.y);
