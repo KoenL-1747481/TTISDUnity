@@ -157,9 +157,26 @@ public class ServerSend
 
     public static void StartedRecording(int _exceptClient, int BPM, int Bars)
     {
+        int cardboard_id = 0;
+        string IP = Server.clients[_exceptClient].player.IP;
+
+        // Find the id of the cardboard matching this laptop IP
+        foreach (ServerClient c in Server.clients.Values)
+        {
+            if (c.player != null && c.player.instrumentType != null)
+            {
+                if (c.player.IP == IP)
+                {
+                    cardboard_id = c.id;
+                    break;
+                }
+            }
+        }
+        if (cardboard_id == 0) // If we didn't find matching cardboard, don't send started recording request
+            return;
         using (Packet _packet = new Packet((int)ServerPackets.startedRecording))
         {
-            _packet.Write(_exceptClient);
+            _packet.Write(cardboard_id);
             _packet.Write(BPM);
             _packet.Write(Bars);
 
