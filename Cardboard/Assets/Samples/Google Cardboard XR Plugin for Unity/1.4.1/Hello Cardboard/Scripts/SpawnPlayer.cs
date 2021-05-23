@@ -55,6 +55,8 @@ public class SpawnPlayer : MonoBehaviour
 
     public GameObject getPlayerByID(int id)
     {
+        print("getting player");
+        print("id " + id + " players " + players + " playerIDs " + playerIDs);
         return players[playerIDs.IndexOf(id)];
     }
 

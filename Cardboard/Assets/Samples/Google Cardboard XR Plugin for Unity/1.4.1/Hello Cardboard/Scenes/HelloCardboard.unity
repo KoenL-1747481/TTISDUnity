@@ -1246,6 +1246,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passedBarColor: {r: 0.09411765, g: 0.14901961, b: 0.42745098, a: 1}
   info: {fileID: 1784210451}
+  spawnPlayer: {fileID: 487905076}
 --- !u!1 &473426269
 GameObject:
   m_ObjectHideFlags: 0
