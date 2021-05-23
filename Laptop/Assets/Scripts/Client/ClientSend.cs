@@ -45,12 +45,10 @@ public class ClientSend : MonoBehaviour
         // Find the id of the cardboard matching this laptop
         foreach (Player c in SessionManager.cardboards.Keys)
         {
-            print("Cardboard IP: " + c.IP);
             if (c.IP == myIP)
             {
-                print("Matching IP Found!");
                 cardboard_id = c.id;
-                print("ID is: " + cardboard_id.ToString());
+                break;
             }
         }
         if (cardboard_id == 0) // If we didn't find matching cardboard, don't send kinect data

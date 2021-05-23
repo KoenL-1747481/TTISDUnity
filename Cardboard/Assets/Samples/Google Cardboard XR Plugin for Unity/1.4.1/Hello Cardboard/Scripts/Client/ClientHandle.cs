@@ -35,7 +35,7 @@ public class ClientHandle : MonoBehaviour
 
     public static void StartedRecording(Packet _packet)
     {
-        int clientId = _packet.ReadInt();
+        int cardboardId = _packet.ReadInt();
         int BPM = _packet.ReadInt();
         int bars = _packet.ReadInt();
         Debug.Log("Started recording...");
@@ -44,7 +44,7 @@ public class ClientHandle : MonoBehaviour
 
         // TODO: de nieuwe gui
         ThreadManager.ExecuteOnMainThread(() => {
-            FindObjectOfType<Record>().StartedRecording(clientId, clickInterval, timeoutInterval, bars);
+            FindObjectOfType<Record>().StartedRecording(cardboardId, clickInterval, timeoutInterval, bars);
         });
     }
 }

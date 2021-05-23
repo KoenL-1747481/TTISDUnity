@@ -86,7 +86,7 @@ public class ClientHandle : MonoBehaviour
 
     public static void StartedRecording(Packet _packet)
     {
-        int clientId = _packet.ReadInt();
+        int cardboardId = _packet.ReadInt();
         int BPM = _packet.ReadInt();
         int Bars = _packet.ReadInt();
 
