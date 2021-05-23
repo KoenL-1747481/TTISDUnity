@@ -91,6 +91,7 @@ public class Record : MonoBehaviour
         yield return new WaitForSeconds(delay);
         laser.SetActive(false);
         reset(0);
+        recordCount += 1;
         info.text = recordStages[2]+recordCount;
     }
 }
