@@ -58,7 +58,6 @@ public class Server
                 }
                 /* Check if we have spawned the cardboard in the scene with this id */
                 List<int> cardboard_ids = new List<int>();
-                Debug.Log("Received cardboard id: " + _clientId);
                 foreach (Player c in SessionManager.cardboards)
                 {
                     cardboard_ids.Add(c.id);
@@ -87,7 +86,6 @@ public class Server
             using (Packet _packet = new Packet(_packetBytes))
             {
                 int _packetId = _packet.ReadInt();
-                Debug.Log("Packet id: " + _packetId);
                 Server.packetHandlers[_packetId](_clientId, _packet); // Call appropriate method to handle the packet
             }
         });
