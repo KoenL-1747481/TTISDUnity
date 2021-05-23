@@ -38,6 +38,7 @@ public class SessionManager : MonoBehaviour
     public void Start()
     {
         Application.targetFrameRate = 60;
+		Application.runInBackground = true;
 
         clientServer = new Client(Constants.SERVER_IP, Constants.SERVER_PORT);
         clientServer.ConnectToServer();
