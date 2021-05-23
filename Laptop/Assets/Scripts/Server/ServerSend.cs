@@ -30,7 +30,8 @@ public class ServerSend
         _packet.WriteLength();
         for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
-            Server.clients[i].tcp.SendData(_packet);
+            if (Server.clients[i].player != null)
+                Server.clients[i].tcp.SendData(_packet);
         }
     }
     /// <summary>Sends a packet to all clients except one via TCP.</summary>
@@ -41,7 +42,7 @@ public class ServerSend
         _packet.WriteLength();
         for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
         {
-            if (i != _exceptClient)
+            if (i != _exceptClient && Server.clients[i].player != null)
             {
                 Server.clients[i].tcp.SendData(_packet);
             }
