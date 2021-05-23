@@ -21,4 +21,9 @@ public class Musician : MonoBehaviour
         return transform.Find("mixamorig:Hips").Find("mixamorig:Spine").Find("mixamorig:Spine1").Find("mixamorig:Spine2").Find("mixamorig:RightShoulder").Find("mixamorig:RightArm")
             .Find("mixamorig:RightForeArm").Find("mixamorig:RightHand");
     }
+
+    public GameObject getLaser()
+    {
+        return transform.Find("mixamorig:Hips").Find("mixamorig:Spine").Find("mixamorig:Spine1").Find("mixamorig:Spine2").Find("mixamorig:Neck").Find("mixamorig:Head").Find("Laser").gameObject;
+    }
 }

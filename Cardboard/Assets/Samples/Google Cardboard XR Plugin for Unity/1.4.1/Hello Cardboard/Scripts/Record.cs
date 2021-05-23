@@ -72,7 +72,7 @@ public class Record : MonoBehaviour
     public void StartedRecording(int clientId, double clickInterval, double timeoutInterval, int totalBarCount)
     {
         GameObject player = spawnPlayer.getPlayerByID(clientId);
-        GameObject laser = player.transform.Find("Laser").gameObject;
+        GameObject laser = player.GetComponent<Musician>().getLaser();
         laser.SetActive(true);
 
         info.text = recordStages[0];
