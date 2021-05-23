@@ -73,6 +73,12 @@ public class SimpleGestureListener : MonoBehaviour, KinectGestures.GestureListen
 								  KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
 	{
 		string sGestureText = gesture + " detected";
+
+		//start recording
+		if (gesture == KinectGestures.Gestures.RaiseRightHand)
+        {
+			SessionManager.instance.TryRecordLoop();
+		}
 		print(sGestureText);
 		if (gesture == KinectGestures.Gestures.Click)
 			sGestureText += string.Format(" at ({0:F1}, {1:F1})", screenPos.x, screenPos.y);
