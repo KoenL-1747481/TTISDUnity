@@ -25,6 +25,7 @@ namespace TTISDProject
         private static MixingSampleProvider Mixer;
 
         private static List<LoopSampleProvider> Loops = new List<LoopSampleProvider>();
+        private static MixingSampleProvider LoopMixer;
         private static int LoopLength = 0;
         private static bool LoopsPaused = false;
         private static object pause_lock = new object();
@@ -35,8 +36,9 @@ namespace TTISDProject
         public void Start()
         {
             Mixer = new MixingSampleProvider(SAMPLE_FORMAT);
-            Mixer.MixerInputEnded += Mixer_MixerInputEnded;
-
+            LoopMixer = new MixingSampleProvider(SAMPLE_FORMAT);
+            LoopMixer.AddMixerInput(new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(new float[1], SAMPLE_FORMAT))));
+            Mixer.AddMixerInput(LoopMixer);
             AddPlayer(-1);
         }
 
@@ -73,6 +75,11 @@ namespace TTISDProject
             AsioDriver.Play();
             
             allowPlayerAudio = true;
+        }
+
+        public static void SaveLoop(string fileName)
+        {
+
         }
 
         public static void SetVolume(float value)
@@ -133,7 +140,7 @@ namespace TTISDProject
                 LoopLength = audio.Length;
                 LoopSampleProvider loop = new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(audio, SAMPLE_FORMAT)));
                 Loops.Add(loop);
-                Mixer.AddMixerInput(loop);
+                LoopMixer.AddMixerInput(loop);
             }
             else
             { // Not first loop: check length, clip if necessary, and set loop on correct position
@@ -145,15 +152,10 @@ namespace TTISDProject
                 LoopSampleProvider loop = new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(audio, SAMPLE_FORMAT)));
                 loop.Position = Loops[0].Position;
                 Loops.Add(loop);
-                Mixer.AddMixerInput(loop);
+                LoopMixer.AddMixerInput(loop);
                 // TODO: Volume control
                 // ...
             }
-        }
-
-        private static void Mixer_MixerInputEnded(object sender, SampleProviderEventArgs e)
-        {
-            Debug.Log("Mixer input ended!");
         }
 
         public static void PlayClickSound()
