@@ -54,13 +54,13 @@ public class ServerClient
 
         /// <summary>Sends data to the client via TCP.</summary>
         /// <param name="_packet">The packet to send.</param>
-        public void SendData(Packet _packet)
+        public async void SendData(Packet _packet)
         {
             try
             {
                 if (socket != null)
                 {
-                    stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null); // Send data to appropriate client
+                    stream.WriteAsync(_packet.ToArray(), 0, _packet.Length());
                 }
             }
             catch (Exception _ex)

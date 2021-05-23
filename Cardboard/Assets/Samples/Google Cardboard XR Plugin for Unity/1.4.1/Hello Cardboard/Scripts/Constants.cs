@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Constants
 {
-    public const int MAX_PLAYERS = 4; // 4 Laptops
     public const int SERVER_PORT = 25566;
     public const int P2P_PORT = 25565;
     public const int CARDBOARD_PORT = 25567;
