@@ -178,7 +178,6 @@ public class Client
                             packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
                         } catch (Exception e)
                         {
-                            Debug.Log("No handler for packet probably?");
                             Debug.Log(e.Message);
                         }
                     }
