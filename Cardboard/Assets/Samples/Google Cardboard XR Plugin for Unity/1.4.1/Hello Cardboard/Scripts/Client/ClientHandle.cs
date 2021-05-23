@@ -38,7 +38,7 @@ public class ClientHandle : MonoBehaviour
         int clientId = _packet.ReadInt();
         int BPM = _packet.ReadInt();
         int bars = _packet.ReadInt();
-
+        Debug.Log("Started recording...");
         double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
         double timeoutInterval = clickInterval * 4.0 * (bars + 1);
 

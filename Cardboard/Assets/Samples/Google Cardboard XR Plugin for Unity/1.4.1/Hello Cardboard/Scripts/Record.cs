@@ -12,6 +12,7 @@ public class Record : MonoBehaviour
     int recordCount = 0;
     List<string> recordStages = new List<string>() { "Record Intro","Recording: bar ","Tracks recorded: "};
     [SerializeField] private TextMeshProUGUI info;
+    [SerializeField] private SpawnPlayer spawnPlayer;
     float increaseValue = 0;
     
     void Start()
@@ -70,7 +71,7 @@ public class Record : MonoBehaviour
 
     public void StartedRecording(int clientId, double clickInterval, double timeoutInterval, int totalBarCount)
     {
-        GameObject player = GameObject.Find("SpawnPoints").GetComponent<SpawnPlayer>().getPlayerByID(clientId);
+        GameObject player = spawnPlayer.getPlayerByID(clientId);
         GameObject laser = player.transform.Find("Laser").gameObject;
         laser.SetActive(true);
 
