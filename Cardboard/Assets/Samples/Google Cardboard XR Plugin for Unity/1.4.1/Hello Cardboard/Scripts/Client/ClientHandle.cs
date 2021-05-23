@@ -43,8 +43,6 @@ public class ClientHandle : MonoBehaviour
         double timeoutInterval = clickInterval * 4.0 * (bars + 1);
 
         // TODO: de nieuwe gui
-        ThreadManager.ExecuteOnMainThread(() => {
-            FindObjectOfType<Record>().StartedRecording(clientId, clickInterval, timeoutInterval, bars);
-        });
+        FindObjectOfType<Record>().StartedRecording(clientId, clickInterval, timeoutInterval, bars);
     }
 }
