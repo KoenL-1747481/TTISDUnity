@@ -49,11 +49,17 @@ namespace TTISDProject
             var fillerLoop = new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(new float[1], SAMPLE_FORMAT)));
             Loops.Add(fillerLoop);
             LoopMixer.AddMixerInput(fillerLoop);
-            LoopVolumeChanger = new VolumeSampleProvider(LoopMixer);
+            var compressor = new SimpleCompressorEffect(LoopMixer);
+            compressor.Enabled = true;
+            compressor.MakeUpGain = 0;
+            LoopVolumeChanger = new VolumeSampleProvider(compressor);
 
             // PlayerMixer wont get discarded because we add buffered sample provider of us (player -1)
             PlayerMixer = new MixingSampleProvider(SAMPLE_FORMAT);
-            PlayerVolumeChanger = new VolumeSampleProvider(PlayerMixer);
+            compressor = new SimpleCompressorEffect(PlayerMixer);
+            compressor.Enabled = true;
+            compressor.MakeUpGain = 0;
+            PlayerVolumeChanger = new VolumeSampleProvider(compressor);
 
             Mixer.AddMixerInput(LoopVolumeChanger);
             Mixer.AddMixerInput(PlayerVolumeChanger);
@@ -78,11 +84,6 @@ namespace TTISDProject
         public static void SetAsio(string driverName)
         {
             Dispose();
-
-            //var compressor = new SimpleCompressorEffect(Mixer);
-            //compressor.Enabled = true;
-            //compressor.MakeUpGain = 0;
-            //var audioOut = new SampleToWaveProvider16(Mixer);
 
             /* Init AsioOut for recording and playback */
             AsioDriver = new AsioOut(driverName);
