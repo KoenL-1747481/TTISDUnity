@@ -26,6 +26,7 @@ namespace TTISDProject
 
         private static List<LoopSampleProvider> Loops = new List<LoopSampleProvider>();
         private static MixingSampleProvider LoopMixer;
+        private static bool SavedLoop = true;
         private static int LoopLength = 0;
         private static bool LoopsPaused = false;
         private static object pause_lock = new object();
@@ -79,7 +80,34 @@ namespace TTISDProject
 
         public static void SaveLoop(string fileName)
         {
+            SavedLoop = false;
+            Debug.Log("Saving loop...");
+            // Disable save button
+            ThreadManager.ExecuteOnMainThread(() =>
+            {
+                SaveButton.btn.interactable = false;
+            });
+            // Create mixer with all saved loops
+            MixingSampleProvider saveMixer = new MixingSampleProvider(SAMPLE_FORMAT);
+            saveMixer.MixerInputEnded += OnSavedFile;
+            foreach (LoopSampleProvider loop in Loops)
+            {
+                saveMixer.AddMixerInput(new CachedSoundSampleProvider(loop.source.cachedSound));
+            }
+            WaveFileWriter.CreateWaveFile(fileName, saveMixer.ToWaveProvider());
+        }
 
+        private static void OnSavedFile(object sender, SampleProviderEventArgs e)
+        {
+            if (!SavedLoop)
+            {
+                Debug.Log("Loop saved!");
+                ThreadManager.ExecuteOnMainThread(() =>
+                {
+                    SaveButton.btn.interactable = true;
+                });
+                SavedLoop = true;
+            }
         }
 
         public static void SetVolume(float value)

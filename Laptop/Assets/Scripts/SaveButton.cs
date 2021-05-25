@@ -6,18 +6,12 @@ using TTISDProject;
 
 public class SaveButton : MonoBehaviour
 {
-    Button btn;
+    public static Button btn;
 
     // Start is called before the first frame update
     void Start()
     {
         btn = GetComponent<Button>();
         btn.onClick.AddListener(delegate { AudioHandler.SaveLoop("the_loop.wav"); });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

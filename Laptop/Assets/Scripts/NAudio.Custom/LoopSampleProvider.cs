@@ -9,7 +9,7 @@ namespace TTISDProject
 {
     class LoopSampleProvider : ISampleProvider
     {
-        CachedSoundSampleProvider source;
+        public CachedSoundSampleProvider source;
 
         /// <summary>
         /// Creates a new Loop stream

@@ -9,7 +9,7 @@ namespace TTISDProject
 {
     class CachedSoundSampleProvider : ISampleProvider
     {
-        private readonly CachedSound cachedSound;
+        public CachedSound cachedSound;
         public long Position { get; set; }
 
         public CachedSoundSampleProvider(CachedSound cachedSound)
