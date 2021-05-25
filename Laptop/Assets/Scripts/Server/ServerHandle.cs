@@ -47,6 +47,6 @@ public class ServerHandle
 
     public static void UndoLoopRequest(int _fromClient, Packet _packet)
     {
-        ServerSend.UndoLoop(_fromClient);
+        Server.OnUndoLoopRequest();
     }
 }

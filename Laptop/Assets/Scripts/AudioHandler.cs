@@ -46,7 +46,9 @@ namespace TTISDProject
 
             LoopMixer = new MixingSampleProvider(SAMPLE_FORMAT);
             // Filler input so loopmixer doesn't get discarded by mixer
-            LoopMixer.AddMixerInput(new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(new float[1], SAMPLE_FORMAT))));
+            var fillerLoop = new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(new float[1], SAMPLE_FORMAT)));
+            Loops.Add(fillerLoop);
+            LoopMixer.AddMixerInput(fillerLoop);
             LoopVolumeChanger = new VolumeSampleProvider(LoopMixer);
 
             // PlayerMixer wont get discarded because we add buffered sample provider of us (player -1)
@@ -112,7 +114,7 @@ namespace TTISDProject
 
         public static void UndoLoop()
         {
-            if (Loops.Count != 0)
+            if (Loops.Count > 1)
             {
                 LoopMixer.RemoveMixerInput(Loops[Loops.Count - 1]);
                 Loops.RemoveAt(Loops.Count - 1);
@@ -205,7 +207,7 @@ namespace TTISDProject
                     Debug.Log("Succesfully resized audio");
                 }
                 LoopSampleProvider loop = new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(audio, SAMPLE_FORMAT)));
-                loop.Position = Loops[0].Position;
+                loop.Position = Loops[Loops.Count - 1].Position;
                 Loops.Add(loop);
                 LoopMixer.AddMixerInput(loop);
             }

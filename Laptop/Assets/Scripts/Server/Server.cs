@@ -23,6 +23,7 @@ public class Server
     private static int Bars = DEFAULT_BARS;
     private static ServerClient RecordingPlayer = null;
     private static Timer RecordTimeoutTimer = null;
+    private static bool UndoAllowed = true;
 
     /// <summary>Starts the server.</summary>
     public static void Start()
@@ -38,6 +39,22 @@ public class Server
         udpListener.BeginReceive(UDPReceiveCallback, null);
 
         Debug.Log($"Server started on port {Constants.SERVER_PORT}.");
+    }
+
+    public static void OnUndoLoopRequest()
+    {
+        if (UndoAllowed)
+        {
+            ServerSend.UndoLoop();
+            UndoAllowed = false;
+            var resetTimer = new System.Timers.Timer(5000);
+            resetTimer.Elapsed += (a, b) =>
+            {
+                UndoAllowed = true;
+            };
+            resetTimer.AutoReset = false;
+            resetTimer.Start();
+        }
     }
 
     public static void OnRecordRequest(int clientId)

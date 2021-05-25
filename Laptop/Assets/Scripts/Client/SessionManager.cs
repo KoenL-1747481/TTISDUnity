@@ -123,7 +123,6 @@ public class SessionManager : MonoBehaviour
 
     public void UndoLoop()
     {
-        AudioHandler.UndoLoop();
         ClientSend.UndoLoopRequest();
     }
 
