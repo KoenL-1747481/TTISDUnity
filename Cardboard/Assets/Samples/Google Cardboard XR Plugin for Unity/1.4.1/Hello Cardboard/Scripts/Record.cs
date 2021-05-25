@@ -99,6 +99,6 @@ public class Record : MonoBehaviour
     {
         if (recordCount != 0)
             recordCount--;
-        info.text = "Tracks recorded: " + recordCount;
+        info.text = "Tracks recorded: " + recordCount; 
     }
 }
