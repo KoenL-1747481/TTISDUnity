@@ -44,4 +44,9 @@ public class ServerHandle
         Debug.Log("Receiving Loop. Audio length: " + audio.Length);
         Server.OnSendLoopRequest(_fromClient, audio);
     }
+
+    public static void UndoLoopRequest(int _fromClient, Packet _packet)
+    {
+        ServerSend.UndoLoop(_fromClient);
+    }
 }

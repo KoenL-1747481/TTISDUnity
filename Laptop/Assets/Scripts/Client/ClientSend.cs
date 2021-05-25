@@ -84,7 +84,6 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    #region loop_packets
     public static void SendLoopRequest(float[] audio)
     {
         Debug.Log("Sending Loop. Audio length: " + audio.Length);
@@ -94,7 +93,15 @@ public class ClientSend : MonoBehaviour
             SendTCPDataToServer(_packet);
         }
     }
-    #endregion
+
+    public static void UndoLoopRequest()
+    {
+        Debug.Log("Sending UNDO_REQUEST...");
+        using (Packet _packet = new Packet((int)ClientPackets.undoLoopRequest))
+        {
+            SendTCPDataToServer(_packet);
+        }
+    }
 
 
 

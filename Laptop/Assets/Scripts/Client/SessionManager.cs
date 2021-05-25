@@ -103,7 +103,6 @@ public class SessionManager : MonoBehaviour
         }
     }
 
-    #region loop_stuff
     public void TryRecordLoop()
     {
         if (!LoopRecorder.IsRecording() && clientServer != null)
@@ -121,7 +120,12 @@ public class SessionManager : MonoBehaviour
             ClientSend.SendLoopRequest(audio);
         }
     }
-    #endregion
+
+    public void UndoLoop()
+    {
+        AudioHandler.UndoLoop();
+        ClientSend.UndoLoopRequest();
+    }
 
     public void AddLaptop(Player player)
     {

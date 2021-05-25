@@ -45,4 +45,15 @@ public class ClientHandle : MonoBehaviour
         // TODO: de nieuwe gui
         FindObjectOfType<Record>().StartedRecording(cardboardId, clickInterval, timeoutInterval, bars);
     }
+
+    public static void UndoLoop(Packet _packet)
+    {
+        Debug.Log("Received UNDO...");
+        ThreadManager.ExecuteOnMainThread(() =>
+        {
+            if (Record.recordCount != 0)
+                Record.recordCount--;
+            Record.info.text = "Tracks recorded: " + Record.recordCount;
+        });
+    }
 }

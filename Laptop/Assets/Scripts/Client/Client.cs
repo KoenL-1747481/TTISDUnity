@@ -48,6 +48,7 @@ public class Client
             { (int)ServerPackets.sendLoopResponse, ClientHandle.SendLoopResponse},
             { (int)ServerPackets.addLoop, ClientHandle.AddLoop},
             { (int)ServerPackets.startedRecording, ClientHandle.StartedRecording},
+            { (int)ServerPackets.undoLoop, ClientHandle.UndoLoop},
         };
         Debug.Log("Initialized packets.");
     }

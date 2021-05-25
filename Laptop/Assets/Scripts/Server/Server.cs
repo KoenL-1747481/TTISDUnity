@@ -205,6 +205,7 @@ public class Server
                 { (int)ClientPackets.welcomeReceivedLaptop, ServerHandle.WelcomeReceivedLaptop},
                 { (int)ClientPackets.loopRecordRequest, ServerHandle.LoopRecordRequest},
                 { (int)ClientPackets.sendLoopRequest, ServerHandle.SendLoopRequest},
+                { (int)ClientPackets.undoLoopRequest, ServerHandle.UndoLoopRequest},
             };
         Debug.Log("Initialized packets.");
     }

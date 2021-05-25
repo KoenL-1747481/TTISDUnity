@@ -17,6 +17,7 @@ public enum ServerPackets
     startAddLoopTCP,
     partAddLoopUDP,
     endAddLoopTCP,
+    undoLoop
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -27,6 +28,7 @@ public enum ClientPackets
     kinectData,
     loopRecordRequest,
     sendLoopRequest,
+    undoLoopRequest,
 }
 
 public class Packet : IDisposable

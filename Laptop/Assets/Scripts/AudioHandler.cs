@@ -22,24 +22,40 @@ namespace TTISDProject
         private static AsioOut AsioDriver;
         private static Dictionary<int, BufferedSampleProvider> PlayerAudio = new Dictionary<int, BufferedSampleProvider>();
         private static CachedSound ClickSound = new CachedSound("Assets/Audio/click.wav");
-        private static MixingSampleProvider Mixer;
 
         private static List<LoopSampleProvider> Loops = new List<LoopSampleProvider>();
-        private static MixingSampleProvider LoopMixer;
         private static bool SavedLoop = true;
         private static int LoopLength = 0;
         private static bool LoopsPaused = false;
         private static object pause_lock = new object();
 
         private static float[] float_buffer = new float[1024 * 16];
-        private static VolumeSampleProvider volumeChanger;
+
+        private static MixingSampleProvider Mixer;
+
+        private static MixingSampleProvider LoopMixer;
+        private static VolumeSampleProvider LoopVolumeChanger;
+
+        private static MixingSampleProvider PlayerMixer;
+        private static VolumeSampleProvider PlayerVolumeChanger;
+
         /* Intialize stuff */
         public void Start()
         {
             Mixer = new MixingSampleProvider(SAMPLE_FORMAT);
+
             LoopMixer = new MixingSampleProvider(SAMPLE_FORMAT);
+            // Filler input so loopmixer doesn't get discarded by mixer
             LoopMixer.AddMixerInput(new LoopSampleProvider(new CachedSoundSampleProvider(new CachedSound(new float[1], SAMPLE_FORMAT))));
-            Mixer.AddMixerInput(LoopMixer);
+            LoopVolumeChanger = new VolumeSampleProvider(LoopMixer);
+
+            // PlayerMixer wont get discarded because we add buffered sample provider of us (player -1)
+            PlayerMixer = new MixingSampleProvider(SAMPLE_FORMAT);
+            PlayerVolumeChanger = new VolumeSampleProvider(PlayerMixer);
+
+            Mixer.AddMixerInput(LoopVolumeChanger);
+            Mixer.AddMixerInput(PlayerVolumeChanger);
+
             AddPlayer(-1);
         }
 
@@ -61,18 +77,15 @@ namespace TTISDProject
         {
             Dispose();
 
-            /* Create pipeline */
-            var compressor = new SimpleCompressorEffect(Mixer);
-            compressor.Enabled = true;
-            compressor.MakeUpGain = 0;
-            volumeChanger = new VolumeSampleProvider(compressor);
-            volumeChanger.Volume = 1.0f;
-            var audioOut = new SampleToWaveProvider16(volumeChanger);
+            //var compressor = new SimpleCompressorEffect(Mixer);
+            //compressor.Enabled = true;
+            //compressor.MakeUpGain = 0;
+            //var audioOut = new SampleToWaveProvider16(Mixer);
 
             /* Init AsioOut for recording and playback */
             AsioDriver = new AsioOut(driverName);
             AsioDriver.AudioAvailable += OnAsioOutAudioAvailable;
-            AsioDriver.InitRecordAndPlayback(audioOut, INPUT_CHANNELS, SAMPLE_RATE);
+            AsioDriver.InitRecordAndPlayback(Mixer.ToWaveProvider16(), INPUT_CHANNELS, SAMPLE_RATE);
             AsioDriver.Play();
             
             allowPlayerAudio = true;
@@ -97,6 +110,15 @@ namespace TTISDProject
             WaveFileWriter.CreateWaveFile(fileName, saveMixer.ToWaveProvider());
         }
 
+        public static void UndoLoop()
+        {
+            if (Loops.Count != 0)
+            {
+                LoopMixer.RemoveMixerInput(Loops[Loops.Count - 1]);
+                Loops.RemoveAt(Loops.Count - 1);
+            }
+        }
+
         private static void OnSavedFile(object sender, SampleProviderEventArgs e)
         {
             if (!SavedLoop)
@@ -110,9 +132,14 @@ namespace TTISDProject
             }
         }
 
-        public static void SetVolume(float value)
+        public static void SetPlayerVolume(float value)
         {
-            volumeChanger.Volume = 2*value;
+            PlayerVolumeChanger.Volume = 2*value;
+        }
+
+        public static void SetLoopVolume(float value)
+        {
+            LoopVolumeChanger.Volume = 2 * value;
         }
 
         public static void StopLoop()
@@ -181,9 +208,9 @@ namespace TTISDProject
                 loop.Position = Loops[0].Position;
                 Loops.Add(loop);
                 LoopMixer.AddMixerInput(loop);
-                // TODO: Volume control
-                // ...
             }
+            // TODO: Volume control
+            // ...
         }
 
         public static void PlayClickSound()
@@ -198,7 +225,7 @@ namespace TTISDProject
             b.DiscardOnBufferOverflow = true;
             PlayerAudio.Add(id, b);
 
-            Mixer.AddMixerInput(b);
+            PlayerMixer.AddMixerInput(b);
         }
 
         public static void PlayPlayerAudio(float[] audio, int count, int player_id)

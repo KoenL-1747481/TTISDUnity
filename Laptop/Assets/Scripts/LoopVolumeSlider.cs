@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace TTISDProject
 {
-    public class VolumeSlider : MonoBehaviour
+    public class LoopVolumeSlider : MonoBehaviour
     {
         Slider slider;
         void Start()
@@ -16,7 +16,7 @@ namespace TTISDProject
 
         private void onVolumeChanged()
         {
-            AudioHandler.SetVolume(slider.value);
+            AudioHandler.SetLoopVolume(slider.value);
         }
     }
 }

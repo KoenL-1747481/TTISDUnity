@@ -9,9 +9,9 @@ public class Record : MonoBehaviour
     bool filling = false;
     List<GameObject> bars = new List<GameObject>();
     [SerializeField] private Color passedBarColor;
-    int recordCount = 0;
+    public static int recordCount = 0;
     List<string> recordStages = new List<string>() { "Record Intro","Recording: bar ","Tracks recorded: "};
-    [SerializeField] private TextMeshProUGUI info;
+    [SerializeField] public static TextMeshProUGUI info;
     [SerializeField] private SpawnPlayer spawnPlayer;
     float increaseValue = 0;
     

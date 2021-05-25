@@ -185,5 +185,12 @@ public class ServerSend
         }
     }
 
+    public static void UndoLoop(int _exceptClient)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.undoLoop))
+        {
+            SendTCPDataToAll(_exceptClient, _packet);
+        }
+    }
     #endregion
 }
