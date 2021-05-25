@@ -99,6 +99,13 @@ public class Record : MonoBehaviour
     {
         if (recordCount != 0)
             recordCount--;
-        info.text = "Tracks recorded: " + recordCount; 
+        info.text = "Tracks recorded: " + recordCount;
+        info.color = Color.red;
+        StartCoroutine(ResetColor());
+    }
+    IEnumerator ResetColor()
+    {
+        yield return new WaitForSeconds(1);
+        info.color = Color.white;
     }
 }
