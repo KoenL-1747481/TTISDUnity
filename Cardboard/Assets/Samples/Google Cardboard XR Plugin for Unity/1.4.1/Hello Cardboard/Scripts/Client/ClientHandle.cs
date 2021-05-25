@@ -49,11 +49,6 @@ public class ClientHandle : MonoBehaviour
     public static void UndoLoop(Packet _packet)
     {
         Debug.Log("Received UNDO...");
-        ThreadManager.ExecuteOnMainThread(() =>
-        {
-            if (Record.recordCount != 0)
-                Record.recordCount--;
-            Record.info.text = "Tracks recorded: " + Record.recordCount;
-        });
+        FindObjectOfType<Record>().UndoLoop();
     }
 }
