@@ -63,7 +63,7 @@ public class SessionManager : MonoBehaviour
     {
         Array.Copy(audio, 0, receive_buffer, buffer_pos, audio.Length);
         buffer_pos += audio.Length;
-        AddLoopTimer.Interval = 1000;
+        AddLoopTimer.Interval = 2000;
         AddLoopTimer.Enabled = true;
     }
 
