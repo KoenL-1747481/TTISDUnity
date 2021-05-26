@@ -167,37 +167,35 @@ public class ServerSend
             {
                 if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
                 {
-                    Server.clients[c.id].tcp.SendData(_startPacket, (a) => {
-                        int BUFFER_LENGTH = 128;
-                        float[] buffer = new float[BUFFER_LENGTH];
-                        // Send audio in parts via UDP
-                        using (Packet _partPacket = new Packet())
+                    Server.clients[c.id].tcp.SendData(_startPacket);
+                    int BUFFER_LENGTH = 128;
+                    float[] buffer = new float[BUFFER_LENGTH];
+                    // Send audio in parts via UDP
+                    using (Packet _partPacket = new Packet())
+                    {
+                        for (int i = 0; i < audio.Length; i += BUFFER_LENGTH)
                         {
-                            for (int i = 0; i < audio.Length; i += BUFFER_LENGTH)
+                            // Write the ID
+                            _partPacket.Write((int)ServerPackets.partAddLoopUDP);
+                            // Copy to buffer and write the audio data
+                            int copy_size = Math.Min(audio.Length - i, BUFFER_LENGTH);
+                            if (copy_size < BUFFER_LENGTH)
                             {
-                                // Write the ID
-                                _partPacket.Write((int)ServerPackets.partAddLoopUDP);
-                                // Copy to buffer and write the audio data
-                                int copy_size = Math.Min(audio.Length - i, BUFFER_LENGTH);
-                                if (copy_size < BUFFER_LENGTH)
-                                {
-                                    float[] residue = new float[copy_size];
-                                    Array.Copy(audio, i, residue, 0, copy_size);
-                                    _partPacket.Write(residue);
-                                }
-                                else
-                                {
-                                    Array.Copy(audio, i, buffer, 0, copy_size);
-                                    _partPacket.Write(buffer);
-                                }
-                                // Write the length
-                                _partPacket.WriteLength();
-                                Server.clients[c.id].udp.SendData(_partPacket);
-                                _partPacket.Reset();
+                                float[] residue = new float[copy_size];
+                                Array.Copy(audio, i, residue, 0, copy_size);
+                                _partPacket.Write(residue);
                             }
+                            else
+                            {
+                                Array.Copy(audio, i, buffer, 0, copy_size);
+                                _partPacket.Write(buffer);
+                            }
+                            // Write the length
+                            _partPacket.WriteLength();
+                            Server.clients[c.id].udp.SendData(_partPacket);
+                            _partPacket.Reset();
                         }
-                    });
-
+                    }
                 }
             }
         }

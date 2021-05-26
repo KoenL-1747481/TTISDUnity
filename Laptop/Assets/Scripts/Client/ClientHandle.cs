@@ -70,7 +70,7 @@ public class ClientHandle : MonoBehaviour
         bool OK = _packet.ReadBool();
         if (OK)
         {
-            //AudioHandler.AddLoop(LoopRecorder.recorded_audio);
+            AudioHandler.AddLoop(LoopRecorder.recorded_audio);
         } else
         {
             string msg = _packet.ReadString();
