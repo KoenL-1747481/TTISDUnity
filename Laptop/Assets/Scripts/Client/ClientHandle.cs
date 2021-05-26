@@ -74,7 +74,7 @@ public class ClientHandle : MonoBehaviour
         bool OK = _packet.ReadBool();
         if (OK)
         {
-            AudioHandler.AddLoop(LoopRecorder.recorded_audio);
+            //AudioHandler.AddLoop(LoopRecorder.recorded_audio);
         } else
         {
             string msg = _packet.ReadString();
@@ -92,23 +92,31 @@ public class ClientHandle : MonoBehaviour
     public static void StartAddLoop(Packet _packet)
     {
         ReceivingLoop = true;
+        int loop_length = _packet.ReadInt();
+        Debug.Log("Started adding loop, Loop length: " + loop_length);
+        AudioHandler.SetLoopLength(loop_length);
     }
 
     public static void PartAddLoop(Packet _packet)
     {
-        float[] audio = _packet.ReadFloats();
-        Array.Copy(audio, 0, receive_buffer, buffer_pos, audio.Length);
-        buffer_pos += audio.Length;
+        Debug.Log("Received UDP loop data...");
+        if (ReceivingLoop)
+        {
+            float[] audio = _packet.ReadFloats();
+            Array.Copy(audio, 0, receive_buffer, buffer_pos, audio.Length);
+            buffer_pos += audio.Length;
+        }
     }
 
     public static void EndAddLoop(Packet _packet)
     {
         ReceivingLoop = false;
-        int loop_length = buffer_pos;
+        int length = buffer_pos;
         buffer_pos = 0;
 
-        float[] audio = new float[loop_length];
-        Array.Copy(receive_buffer, 0, audio, 0, loop_length);
+        Debug.Log("Ended adding loop. Received length: " + length);
+        float[] audio = new float[length];
+        Array.Copy(receive_buffer, 0, audio, 0, length);
         AudioHandler.AddLoop(audio);
     }
 

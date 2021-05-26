@@ -54,13 +54,13 @@ public class ServerClient
 
         /// <summary>Sends data to the client via TCP.</summary>
         /// <param name="_packet">The packet to send.</param>
-        public async void SendData(Packet _packet)
+        public async void SendData(Packet _packet, System.AsyncCallback onSent = null)
         {
             try
             {
                 if (socket != null)
                 {
-                    stream.WriteAsync(_packet.ToArray(), 0, _packet.Length());
+                    stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), onSent, null);
                 }
             }
             catch (Exception _ex)
@@ -177,9 +177,9 @@ public class ServerClient
 
         /// <summary>Sends data to the client via UDP.</summary>
         /// <param name="_packet">The packet to send.</param>
-        public void SendData(Packet _packet)
+        public void SendData(Packet _packet, System.AsyncCallback onSent = null)
         {
-            Server.SendUDPData(endPoint, _packet);
+            Server.SendUDPData(endPoint, _packet, onSent);
         }
 
         /// <summary>Prepares received data to be used by the appropriate packet handler methods.</summary>

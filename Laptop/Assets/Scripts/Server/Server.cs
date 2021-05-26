@@ -193,13 +193,13 @@ public class Server
     /// <summary>Sends a packet to the specified endpoint via UDP.</summary>
     /// <param name="_clientEndPoint">The endpoint to send the packet to.</param>
     /// <param name="_packet">The packet to send.</param>
-    public static void SendUDPData(IPEndPoint _clientEndPoint, Packet _packet)
+    public static void SendUDPData(IPEndPoint _clientEndPoint, Packet _packet, System.AsyncCallback onSent = null)
     {
         try
         {
             if (_clientEndPoint != null)
             {
-                udpListener.BeginSend(_packet.ToArray(), _packet.Length(), _clientEndPoint, null, null);
+                udpListener.BeginSend(_packet.ToArray(), _packet.Length(), _clientEndPoint, onSent, null);
             }
         }
         catch (Exception _ex)

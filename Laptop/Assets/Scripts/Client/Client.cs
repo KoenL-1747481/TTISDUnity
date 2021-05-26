@@ -308,8 +308,14 @@ public class Client
             {
                 using (Packet _packet = new Packet(_data))
                 {
-                    int _packetId = _packet.ReadInt();
-                    packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                    try
+                    {
+                        int _packetId = _packet.ReadInt();
+                        packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                    } catch (Exception e)
+                    {
+                        Debug.Log(e.Message);
+                    }
                 }
             });
         }
