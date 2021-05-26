@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 public class ServerSend
@@ -145,6 +144,66 @@ public class ServerSend
         using (Packet _packet = new Packet((int)ServerPackets.addLoop))
         {
             _packet.Write(audio);
+            _packet.WriteLength();
+            foreach (ServerClient c in Server.clients.Values)
+            {
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                {
+                    Server.clients[c.id].tcp.SendData(_packet);
+                }
+            }
+        }
+    }
+
+    public static void AddLoopUDP(int _exceptClient, float[] audio)
+    {
+        // Send start packet via TCP
+        using (Packet _packet = new Packet((int)ServerPackets.startAddLoopTCP))
+        {
+            _packet.WriteLength();
+            foreach (ServerClient c in Server.clients.Values)
+            {
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                {
+                    Server.clients[c.id].tcp.SendData(_packet);
+                }
+            }
+        }
+        int BUFFER_LENGTH = 512;
+        float[] buffer = new float[BUFFER_LENGTH];
+        // Send audio in parts via UDP
+        using (Packet _packet = new Packet((int)ServerPackets.partAddLoopUDP))
+        {
+            for (int i = 0; i < audio.Length; i += BUFFER_LENGTH)
+            {
+                // Copy to buffer
+                int copy_size = Math.Min(audio.Length - i, BUFFER_LENGTH);
+                if (copy_size < BUFFER_LENGTH)
+                {
+                    float[] residue = new float[copy_size];
+                    Array.Copy(audio, i, residue, 0, copy_size);
+                    // Send to all laptops
+                    _packet.Write(residue);
+                } else
+                {
+                    Array.Copy(audio, i, buffer, 0, copy_size);
+                    // Send to all laptops
+                    _packet.Write(buffer);
+                }
+                _packet.WriteLength();
+                foreach (ServerClient c in Server.clients.Values)
+                {
+                    if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                    {
+                        Server.clients[c.id].udp.SendData(_packet);
+                    }
+                }
+                _packet.Reset();
+            }
+        }
+        // Send end packet via TCP
+        using (Packet _packet = new Packet((int)ServerPackets.endAddLoopTCP))
+        {
             _packet.WriteLength();
             foreach (ServerClient c in Server.clients.Values)
             {

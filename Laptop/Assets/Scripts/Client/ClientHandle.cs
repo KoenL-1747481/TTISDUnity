@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Timers;
@@ -9,6 +10,10 @@ using UnityEngine.UI;
 public class ClientHandle : MonoBehaviour
 {
     private static Timer timer;
+
+    private static bool ReceivingLoop = false;
+    private static float[] receive_buffer = new float[10000000];
+    private static int buffer_pos = 0;
 
     public static void Welcome(Packet _packet)
     {
@@ -81,6 +86,29 @@ public class ClientHandle : MonoBehaviour
     {
         float[] audio = _packet.ReadFloats();
         Debug.Log("Received AddLoop. Audio Length: " + audio.Length);
+        AudioHandler.AddLoop(audio);
+    }
+
+    public static void StartAddLoop(Packet _packet)
+    {
+        ReceivingLoop = true;
+    }
+
+    public static void PartAddLoop(Packet _packet)
+    {
+        float[] audio = _packet.ReadFloats();
+        Array.Copy(audio, 0, receive_buffer, buffer_pos, audio.Length);
+        buffer_pos += audio.Length;
+    }
+
+    public static void EndAddLoop(Packet _packet)
+    {
+        ReceivingLoop = false;
+        int loop_length = buffer_pos;
+        buffer_pos = 0;
+
+        float[] audio = new float[loop_length];
+        Array.Copy(receive_buffer, 0, audio, 0, loop_length);
         AudioHandler.AddLoop(audio);
     }
 
