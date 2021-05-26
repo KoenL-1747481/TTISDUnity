@@ -21,6 +21,10 @@ public class SessionManager : MonoBehaviour
     private static byte[] byte_buffer = new byte[1024 * 16];
     private static float[] float_buffer = new float[1024 * 16];
 
+    private System.Timers.Timer AddLoopTimer;
+    private float[] receive_buffer = new float[10000000];
+    int buffer_pos = 0;
+
     private void OnApplicationQuit()
     {
         clientServer?.Disconnect();
@@ -46,6 +50,36 @@ public class SessionManager : MonoBehaviour
 
         listening = true;
         ThreadPool.QueueUserWorkItem(AudioListenerThread);
+
+        AddLoopTimer = new System.Timers.Timer(1000);
+        AddLoopTimer.AutoReset = false;
+        AddLoopTimer.Elapsed += (a, b) =>
+        {
+            EndAddLoop();
+        };
+    }
+
+    public void PartAddLoop(float[] audio)
+    {
+        Array.Copy(audio, 0, receive_buffer, buffer_pos, audio.Length);
+        buffer_pos += audio.Length;
+        AddLoopTimer.Interval = 1000;
+        AddLoopTimer.Enabled = true;
+    }
+
+    private void EndAddLoop()
+    {
+        int length = buffer_pos;
+        buffer_pos = 0;
+        ThreadPool.QueueUserWorkItem((a) =>
+        {
+            while (AudioHandler.GetLoopLength() == 0)
+                Debug.Log("DIGGEMA!");
+            Debug.Log("Ended adding loop. Received length: " + length);
+            float[] audio = new float[length];
+            Array.Copy(receive_buffer, 0, audio, 0, length);
+            AudioHandler.AddLoop(audio);
+        });
     }
 
     private static void AudioListenerThread(object state)

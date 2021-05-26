@@ -199,6 +199,11 @@ namespace TTISDProject
             }
         }
 
+        public static int GetLoopLength()
+        {
+            return LoopLength;
+        }
+
         public static void AddLoop(float[] audio)
         {
             if (LoopLength == 0)

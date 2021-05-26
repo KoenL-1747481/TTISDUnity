@@ -165,12 +165,11 @@ public class ServerSend
             _startPacket.WriteLength();
             foreach (ServerClient c in Server.clients.Values)
             {
-                if (c.player != null && c.player.instrumentType == null )//&& c.id != _exceptClient)
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
                 {
                     Server.clients[c.id].tcp.SendData(_startPacket, (a) => {
-                        int BUFFER_LENGTH = 8;
+                        int BUFFER_LENGTH = 128;
                         float[] buffer = new float[BUFFER_LENGTH];
-                        bool last_packet = false;
                         // Send audio in parts via UDP
                         using (Packet _partPacket = new Packet())
                         {
@@ -180,8 +179,6 @@ public class ServerSend
                                 _partPacket.Write((int)ServerPackets.partAddLoopUDP);
                                 // Copy to buffer and write the audio data
                                 int copy_size = Math.Min(audio.Length - i, BUFFER_LENGTH);
-                                if (copy_size < BUFFER_LENGTH || i + BUFFER_LENGTH == audio.Length)
-                                    last_packet = true;
                                 if (copy_size < BUFFER_LENGTH)
                                 {
                                     float[] residue = new float[copy_size];
@@ -195,24 +192,12 @@ public class ServerSend
                                 }
                                 // Write the length
                                 _partPacket.WriteLength();
-
-                                if (last_packet)
-                                    Server.clients[c.id].udp.SendData(_partPacket, (a) =>
-                                    {
-                                        // Send end packet via TCP
-                                        using (Packet _endPacket = new Packet((int)ServerPackets.endAddLoopTCP))
-                                        {
-                                            _endPacket.WriteLength();
-                                            Server.clients[c.id].udp.SendData(_endPacket);
-                                        }
-                                    });
-                                else {
-                                    Server.clients[c.id].udp.SendData(_partPacket);
-                                }
+                                Server.clients[c.id].udp.SendData(_partPacket);
                                 _partPacket.Reset();
                             }
                         }
                     });
+
                 }
             }
         }

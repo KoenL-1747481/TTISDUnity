@@ -51,7 +51,6 @@ public class Client
             { (int)ServerPackets.undoLoop, ClientHandle.UndoLoop},
             { (int)ServerPackets.startAddLoopTCP, ClientHandle.StartAddLoop},
             { (int)ServerPackets.partAddLoopUDP, ClientHandle.PartAddLoop},
-            { (int)ServerPackets.endAddLoopTCP, ClientHandle.EndAddLoop},
         };
         Debug.Log("Initialized packets.");
     }

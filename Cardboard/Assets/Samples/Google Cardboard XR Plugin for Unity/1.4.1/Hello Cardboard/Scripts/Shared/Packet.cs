@@ -16,7 +16,6 @@ public enum ServerPackets
     addLoop,
     startAddLoopTCP,
     partAddLoopUDP,
-    endAddLoopTCP,
     undoLoop,
 }
 
