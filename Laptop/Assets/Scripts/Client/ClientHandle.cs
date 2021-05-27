@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Timers;
@@ -48,19 +49,23 @@ public class ClientHandle : MonoBehaviour
 
     public static void LoopRecordResponse(Packet _packet)
     {
-        Debug.Log("Received record response.");
-        bool OK = _packet.ReadBool();
-        string msg = _packet.ReadString();
-        int BPM = _packet.ReadInt();
-        int bars = _packet.ReadInt();
+        ThreadManager.ExecuteOnMainThread(() =>
+        {
+            Debug.Log("Received record response.");
+            bool OK = _packet.ReadBool();
+            string msg = _packet.ReadString();
+            int BPM = _packet.ReadInt();
+            int bars = _packet.ReadInt();
 
-        if (OK)
-        {
-            LoopRecorder.StartRecording(BPM, bars);
-        } else
-        {
-            Debug.Log(msg);
-        }
+            if (OK)
+            {
+                LoopRecorder.StartRecording(BPM, bars);
+            }
+            else
+            {
+                Debug.Log(msg);
+            }
+        });
     }
 
     public static void SendLoopResponse(Packet _packet)
@@ -84,13 +89,30 @@ public class ClientHandle : MonoBehaviour
         AudioHandler.AddLoop(audio);
     }
 
+    public static void StartAddLoop(Packet _packet)
+    {
+        int loop_length = _packet.ReadInt();
+        Debug.Log("Setting up loop with length: " + loop_length);
+        AudioHandler.SetLoopLength(loop_length);
+    }
+
+    public static void PartAddLoop(Packet _packet)
+    {
+        Debug.Log("Received UDP data.");
+        float[] audio = _packet.ReadFloats();
+        SessionManager.instance.PartAddLoop(audio);
+    }
+
     public static void StartedRecording(Packet _packet)
     {
         int cardboardId = _packet.ReadInt();
         int BPM = _packet.ReadInt();
         int Bars = _packet.ReadInt();
 
-        RecordButton.btn.interactable = false;
+        ThreadManager.ExecuteOnMainThread(() =>
+        {
+            RecordButton.btn.interactable = false;
+        });
         double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
         double timeoutInterval = clickInterval * 4.0 * (Bars + 1);
         timer = new Timer(timeoutInterval);

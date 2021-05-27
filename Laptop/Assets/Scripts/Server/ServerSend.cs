@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 public class ServerSend
@@ -140,23 +139,76 @@ public class ServerSend
         }
     }
 
-    public static void AddLoop(int _exceptClient, float[] audio)
+    public static void AddLoop(int _client, float[] audio)
     {
         using (Packet _packet = new Packet((int)ServerPackets.addLoop))
         {
             _packet.Write(audio);
             _packet.WriteLength();
-            foreach (ServerClient c in Server.clients.Values)
-            {
-                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
-                {
-                    Server.clients[c.id].tcp.SendData(_packet);
-                }
-            }
+            Server.clients[_client].tcp.SendData(_packet);
         }
     }
 
-    public static void StartedRecording(int _exceptClient, int BPM, int Bars)
+    public static void AddLoopUDP(int _exceptClient, float[] audio)
+    {
+        // Send start packet via TCP
+        using (Packet _startPacket = new Packet((int)ServerPackets.startAddLoopTCP))
+        {
+            // Write the length
+            _startPacket.Write(audio.Length);
+            _startPacket.WriteLength();
+            foreach (ServerClient c in Server.clients.Values)
+            {
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient && c.player.IP != Constants.SERVER_IP)
+                {
+                    Server.clients[c.id].tcp.SendData(_startPacket);
+                }
+            }
+        }
+
+        int BUFFER_LENGTH = 128;
+        float[] buffer = new float[BUFFER_LENGTH];
+        // Send audio in parts via UDP
+        Packet _partPacket = new Packet();
+        for (int i = 0; i < audio.Length; i += BUFFER_LENGTH)
+        {
+            // Write the ID
+            _partPacket.Write((int)ServerPackets.partAddLoopUDP);
+            // Copy to buffer and write the audio data
+            int copy_size = Math.Min(audio.Length - i, BUFFER_LENGTH);
+            if (copy_size < BUFFER_LENGTH)
+            {
+                float[] residue = new float[copy_size];
+                Array.Copy(audio, i, residue, 0, copy_size);
+                _partPacket.Write(residue);
+            }
+            else
+            {
+                Array.Copy(audio, i, buffer, 0, copy_size);
+                _partPacket.Write(buffer);
+            }
+            // Write the length
+            _partPacket.WriteLength();
+            foreach (ServerClient c in Server.clients.Values)
+            {
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient && c.player.IP != Constants.SERVER_IP)
+                {
+                    Server.clients[c.id].udp.SendData(_partPacket);
+                }
+            }
+            _partPacket.Reset();
+            NOP(0.001); // Dirty piece of shite
+        }
+    }
+
+    private static void NOP(double durationSeconds)
+    {
+        var durationTicks = Math.Round(durationSeconds * System.Diagnostics.Stopwatch.Frequency);
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        while (sw.ElapsedTicks < durationTicks) ;
+    }
+
+public static void StartedRecording(int _exceptClient, int BPM, int Bars)
     {
         int cardboard_id = 0;
         string IP = Server.clients[_exceptClient].player.IP;

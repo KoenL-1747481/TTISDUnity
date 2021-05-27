@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Timers;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class Server
     private static int BPM = DEFAULT_BPM;
     private static int Bars = DEFAULT_BARS;
     private static ServerClient RecordingPlayer = null;
-    private static Timer RecordTimeoutTimer = null;
+    private static System.Timers.Timer RecordTimeoutTimer = null;
     private static bool UndoAllowed = true;
 
     /// <summary>Starts the server.</summary>
@@ -98,12 +99,30 @@ public class Server
             /*RecordTimeoutTimer?.Stop();
             RecordTimeoutTimer?.Close();*/
 
+            
             // Send response to the requester
             ServerSend.SendLoopResponse(clientId, true, "OK");
             // Send loop to everyone except the requester
-            ServerSend.AddLoop(clientId, audio);
+            ThreadPool.QueueUserWorkItem((a) =>
+            {
+                ServerSend.AddLoopUDP(clientId, audio);
+                if (clients[clientId].player.IP != Constants.SERVER_IP)
+                {
+                    // Get client who is also server
+                    ServerClient client = null;
+                    foreach (ServerClient c in clients.Values)
+                    {
+                        if (c.player != null && c.player.IP == Constants.SERVER_IP && c.player.instrumentType == null)
+                        {
+                            client = c;
+                        }
+                    }
+                    if (client != null)
+                        ServerSend.AddLoop(client.id, audio);
+                }
+            });
             // Save the loop server side as well, for if someone joins after loops are recorded.
-            // TODO: doesn't matter atm
+            // TODO: doesn't matter atm lel
         }
         else
         {
@@ -121,8 +140,8 @@ public class Server
         {
             c?.Disconnect();
         }
-        RecordTimeoutTimer?.Stop();
-        RecordTimeoutTimer?.Close();
+        //RecordTimeoutTimer?.Stop();
+        //RecordTimeoutTimer?.Close();
         RecordingPlayer = null;
         BPM = DEFAULT_BPM;
         Bars = DEFAULT_BARS;
@@ -193,13 +212,13 @@ public class Server
     /// <summary>Sends a packet to the specified endpoint via UDP.</summary>
     /// <param name="_clientEndPoint">The endpoint to send the packet to.</param>
     /// <param name="_packet">The packet to send.</param>
-    public static void SendUDPData(IPEndPoint _clientEndPoint, Packet _packet)
+    public static void SendUDPData(IPEndPoint _clientEndPoint, Packet _packet, System.AsyncCallback onSent = null)
     {
         try
         {
             if (_clientEndPoint != null)
             {
-                udpListener.BeginSend(_packet.ToArray(), _packet.Length(), _clientEndPoint, null, null);
+                udpListener.BeginSend(_packet.ToArray(), _packet.Length(), _clientEndPoint, onSent, null);
             }
         }
         catch (Exception _ex)

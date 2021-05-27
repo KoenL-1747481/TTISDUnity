@@ -49,6 +49,8 @@ public class Client
             { (int)ServerPackets.addLoop, ClientHandle.AddLoop},
             { (int)ServerPackets.startedRecording, ClientHandle.StartedRecording},
             { (int)ServerPackets.undoLoop, ClientHandle.UndoLoop},
+            { (int)ServerPackets.startAddLoopTCP, ClientHandle.StartAddLoop},
+            { (int)ServerPackets.partAddLoopUDP, ClientHandle.PartAddLoop},
         };
         Debug.Log("Initialized packets.");
     }
@@ -173,23 +175,18 @@ public class Client
             {
                 // While packet contains data AND packet data length doesn't exceed the length of the packet we're reading
                 byte[] _packetBytes = receivedData.ReadBytes(_packetLength);
-                ThreadManager.ExecuteOnMainThread(() =>
+                Packet _packet = new Packet(_packetBytes);
+                int _packetId = _packet.ReadInt();
+                Debug.Log("Packet id: " + _packetId);
+                try
                 {
-                    using (Packet _packet = new Packet(_packetBytes))
-                    {
-                        int _packetId = _packet.ReadInt();
-                        Debug.Log("Packet id: " + _packetId);
-                        try
-                        {
-                            packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
-                        } catch (Exception e)
-                        {
-                            Debug.Log("No handler for packet probably");
-                            Debug.Log(e.Message);
-                        }
-                    }
-                });
-
+                    packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                } catch (Exception e)
+                {
+                    Debug.Log("No handler for packet probably");
+                    Debug.Log(e.Message);
+                }
+       
                 _packetLength = 0; // Reset packet length
                 if (receivedData.UnreadLength() >= 4)
                 {
@@ -305,8 +302,14 @@ public class Client
             {
                 using (Packet _packet = new Packet(_data))
                 {
-                    int _packetId = _packet.ReadInt();
-                    packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                    try
+                    {
+                        int _packetId = _packet.ReadInt();
+                        packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                    } catch (Exception e)
+                    {
+                        Debug.Log(e.Message);
+                    }
                 }
             });
         }
