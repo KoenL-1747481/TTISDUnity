@@ -214,7 +214,7 @@ public class ServerSend
                 }
             }
             _partPacket.Reset();
-            NOP(0.001); // Dirty piece of shite
+            NOP(0.002); // Dirty piece of shite
         }
     }
 
