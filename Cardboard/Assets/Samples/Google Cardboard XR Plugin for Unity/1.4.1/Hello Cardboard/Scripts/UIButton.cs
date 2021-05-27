@@ -38,7 +38,7 @@ public class UIButton : MonoBehaviour
             entered = false;
             heldButton = true;
         }
-        else
+        else if (!Input.GetMouseButton(0))
         {
             heldButton = false;
         }
