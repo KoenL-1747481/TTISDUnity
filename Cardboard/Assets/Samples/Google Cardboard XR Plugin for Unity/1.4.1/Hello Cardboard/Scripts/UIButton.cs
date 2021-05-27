@@ -38,6 +38,9 @@ public class UIButton : MonoBehaviour
             entered = false;
             heldButton = true;
         }
-        heldButton = false;
+        else
+        {
+            heldButton = false;
+        }
     }
 }
