@@ -106,9 +106,23 @@ public class Server
             ThreadPool.QueueUserWorkItem((a) =>
             {
                 ServerSend.AddLoopUDP(clientId, audio);
+                if (clients[clientId].player.IP != Constants.SERVER_IP)
+                {
+                    // Get client who is also server
+                    ServerClient client = null;
+                    foreach (ServerClient c in clients.Values)
+                    {
+                        if (c.player != null && c.player.IP == Constants.SERVER_IP && c.player.instrumentType == null)
+                        {
+                            client = c;
+                        }
+                    }
+                    if (client != null)
+                        ServerSend.AddLoop(client.id, audio);
+                }
             });
             // Save the loop server side as well, for if someone joins after loops are recorded.
-            // TODO: doesn't matter atm
+            // TODO: doesn't matter atm lel
         }
         else
         {

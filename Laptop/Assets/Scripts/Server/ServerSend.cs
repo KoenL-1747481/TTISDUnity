@@ -139,19 +139,13 @@ public class ServerSend
         }
     }
 
-    public static void AddLoop(int _exceptClient, float[] audio)
+    public static void AddLoop(int _client, float[] audio)
     {
         using (Packet _packet = new Packet((int)ServerPackets.addLoop))
         {
             _packet.Write(audio);
             _packet.WriteLength();
-            foreach (ServerClient c in Server.clients.Values)
-            {
-                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
-                {
-                    Server.clients[c.id].tcp.SendData(_packet);
-                }
-            }
+            Server.clients[_client].tcp.SendData(_packet);
         }
     }
 
@@ -165,7 +159,7 @@ public class ServerSend
             _startPacket.WriteLength();
             foreach (ServerClient c in Server.clients.Values)
             {
-                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient && c.player.IP != Constants.SERVER_IP)
                 {
                     Server.clients[c.id].tcp.SendData(_startPacket);
                 }
@@ -197,13 +191,13 @@ public class ServerSend
             _partPacket.WriteLength();
             foreach (ServerClient c in Server.clients.Values)
             {
-                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient && c.player.IP != Constants.SERVER_IP)
                 {
                     Server.clients[c.id].udp.SendData(_partPacket);
                 }
             }
             _partPacket.Reset();
-            NOP(0.001);
+            NOP(0.001); // Dirty piece of shite
         }
     }
 
@@ -211,11 +205,7 @@ public class ServerSend
     {
         var durationTicks = Math.Round(durationSeconds * System.Diagnostics.Stopwatch.Frequency);
         var sw = System.Diagnostics.Stopwatch.StartNew();
-
-        while (sw.ElapsedTicks < durationTicks)
-        {
-
-        }
+        while (sw.ElapsedTicks < durationTicks) ;
     }
 
 public static void StartedRecording(int _exceptClient, int BPM, int Bars)
