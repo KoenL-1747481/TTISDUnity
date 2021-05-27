@@ -11,7 +11,7 @@ namespace TTISDProject
         public static AudioHandler instance;
 
         private static readonly int SAMPLE_RATE = 44100;
-        private static readonly int INPUT_CHANNELS = 2;
+        private static readonly int INPUT_CHANNELS = 4;
         private static readonly int OUTPUT_CHANNELS = 2;
         private static readonly int BUFFER_SIZE = 1024 * 32;
         private static readonly WaveFormat SAMPLE_FORMAT = WaveFormat.CreateIeeeFloatWaveFormat(SAMPLE_RATE, OUTPUT_CHANNELS);
