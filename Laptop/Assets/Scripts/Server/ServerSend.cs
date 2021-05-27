@@ -203,11 +203,22 @@ public class ServerSend
                 }
             }
             _partPacket.Reset();
-            System.Threading.Thread.Sleep(500);
+            NOP(0.001);
         }
     }
 
-    public static void StartedRecording(int _exceptClient, int BPM, int Bars)
+    private static void NOP(double durationSeconds)
+    {
+        var durationTicks = Math.Round(durationSeconds * System.Diagnostics.Stopwatch.Frequency);
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+
+        while (sw.ElapsedTicks < durationTicks)
+        {
+
+        }
+    }
+
+public static void StartedRecording(int _exceptClient, int BPM, int Bars)
     {
         int cardboard_id = 0;
         string IP = Server.clients[_exceptClient].player.IP;
