@@ -22,6 +22,7 @@ namespace TTISDProject
         private static AsioOut AsioDriver;
         private static Dictionary<int, BufferedSampleProvider> PlayerAudio = new Dictionary<int, BufferedSampleProvider>();
         private static CachedSound ClickSound = new CachedSound("Assets/Audio/click.wav");
+        public static float ClickVolume = 1.0f;
 
         private static List<LoopSampleProvider> Loops = new List<LoopSampleProvider>();
         private static bool SavedLoop = true;
@@ -231,7 +232,9 @@ namespace TTISDProject
 
         public static void PlayClickSound()
         {
-            Mixer?.AddMixerInput(new CachedSoundSampleProvider(ClickSound));
+            var click = new VolumeSampleProvider(new CachedSoundSampleProvider(ClickSound));
+            click.Volume = ClickVolume;
+            Mixer?.AddMixerInput(click);
         }
 
         public static void AddPlayer(int id)
