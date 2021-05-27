@@ -77,7 +77,7 @@ public class SimpleGestureListener : MonoBehaviour, KinectGestures.GestureListen
 
 		if (gesture == KinectGestures.Gestures.RaiseRightHand) //start recording
 			SessionManager.instance.TryRecordLoop();
-		else if (gesture == KinectGestures.Gestures.RaiseLeftHand) //undo recording
+		else if (gesture == KinectGestures.Gestures.Wave) //undo recording
 			SessionManager.instance.UndoLoop();
 
 		print(sGestureText);

@@ -69,8 +69,8 @@ public class SpawnPlayer : MonoBehaviour
             if (model.name == instrumentName)
             {
                 Vector3 playerPos = spawnPoints[indexOfPlayerID].position;
-                playerPos -= spawnPoints[indexOfPlayerID].forward*0.6f;
-                GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[indexOfPlayerID].position, spawnPoints[indexOfPlayerID].rotation);
+                playerPos -= spawnPoints[indexOfPlayerID].forward*0.3f;
+                GameObject instrument = Instantiate(instrumentModels[i], spawnPoints[indexOfPlayerID].position+ spawnPoints[indexOfPlayerID].forward*0.3f, spawnPoints[indexOfPlayerID].rotation);
                 GameObject player = Instantiate(playerModels[playerID], playerPos, spawnPoints[indexOfPlayerID].rotation);
                 players.Add(player);
 
