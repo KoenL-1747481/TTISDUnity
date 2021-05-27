@@ -168,7 +168,7 @@ public class ServerSend
                 if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
                 {
                     Server.clients[c.id].tcp.SendData(_startPacket);
-                    int BUFFER_LENGTH = 128;
+                    int BUFFER_LENGTH = 8;
                     float[] buffer = new float[BUFFER_LENGTH];
                     // Send audio in parts via UDP
                     using (Packet _partPacket = new Packet())
