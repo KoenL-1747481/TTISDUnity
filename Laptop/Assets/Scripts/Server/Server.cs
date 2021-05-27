@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Timers;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class Server
     private static int BPM = DEFAULT_BPM;
     private static int Bars = DEFAULT_BARS;
     private static ServerClient RecordingPlayer = null;
-    private static Timer RecordTimeoutTimer = null;
+    private static System.Timers.Timer RecordTimeoutTimer = null;
     private static bool UndoAllowed = true;
 
     /// <summary>Starts the server.</summary>
@@ -98,10 +99,14 @@ public class Server
             /*RecordTimeoutTimer?.Stop();
             RecordTimeoutTimer?.Close();*/
 
+            
             // Send response to the requester
             ServerSend.SendLoopResponse(clientId, true, "OK");
             // Send loop to everyone except the requester
-            ServerSend.AddLoop(clientId, audio);
+            ThreadPool.QueueUserWorkItem((a) =>
+            {
+                ServerSend.AddLoop(clientId, audio);
+            });
             // Save the loop server side as well, for if someone joins after loops are recorded.
             // TODO: doesn't matter atm
         }
@@ -121,8 +126,8 @@ public class Server
         {
             c?.Disconnect();
         }
-        RecordTimeoutTimer?.Stop();
-        RecordTimeoutTimer?.Close();
+        //RecordTimeoutTimer?.Stop();
+        //RecordTimeoutTimer?.Close();
         RecordingPlayer = null;
         BPM = DEFAULT_BPM;
         Bars = DEFAULT_BARS;

@@ -175,23 +175,18 @@ public class Client
             {
                 // While packet contains data AND packet data length doesn't exceed the length of the packet we're reading
                 byte[] _packetBytes = receivedData.ReadBytes(_packetLength);
-                ThreadManager.ExecuteOnMainThread(() =>
+                Packet _packet = new Packet(_packetBytes);
+                int _packetId = _packet.ReadInt();
+                Debug.Log("Packet id: " + _packetId);
+                try
                 {
-                    using (Packet _packet = new Packet(_packetBytes))
-                    {
-                        int _packetId = _packet.ReadInt();
-                        Debug.Log("Packet id: " + _packetId);
-                        try
-                        {
-                            packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
-                        } catch (Exception e)
-                        {
-                            Debug.Log("No handler for packet probably");
-                            Debug.Log(e.Message);
-                        }
-                    }
-                });
-
+                    packetHandlers[_packetId](_packet); // Call appropriate method to handle the packet
+                } catch (Exception e)
+                {
+                    Debug.Log("No handler for packet probably");
+                    Debug.Log(e.Message);
+                }
+       
                 _packetLength = 0; // Reset packet length
                 if (receivedData.UnreadLength() >= 4)
                 {
