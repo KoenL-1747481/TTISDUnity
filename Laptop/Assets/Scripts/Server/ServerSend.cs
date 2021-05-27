@@ -203,6 +203,7 @@ public class ServerSend
                 }
             }
             _partPacket.Reset();
+            System.Threading.Thread.Sleep(1);
         }
     }
 
