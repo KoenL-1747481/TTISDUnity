@@ -149,6 +149,22 @@ public class ServerSend
         }
     }
 
+    public static void AddLoop(float[] audio, int _exceptClient)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.addLoop))
+        {
+            _packet.Write(audio);
+            _packet.WriteLength();
+            foreach (ServerClient c in Server.clients.Values)
+            {
+                if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient)
+                {
+                    c.tcp.SendData(_packet);
+                }
+            }
+        }
+    }
+
     public static void AddLoopUDP(int _exceptClient, float[] audio)
     {
         // Send start packet via TCP
@@ -161,7 +177,7 @@ public class ServerSend
             {
                 if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient && c.player.IP != Constants.SERVER_IP)
                 {
-                    Server.clients[c.id].tcp.SendData(_startPacket);
+                    c.tcp.SendData(_startPacket);
                 }
             }
         }
@@ -193,7 +209,8 @@ public class ServerSend
             {
                 if (c.player != null && c.player.instrumentType == null && c.id != _exceptClient && c.player.IP != Constants.SERVER_IP)
                 {
-                    Server.clients[c.id].udp.SendData(_partPacket);
+                    Debug.Log("Sending UDP data to: " + c.player.IP);
+                    c.udp.SendData(_partPacket);
                 }
             }
             _partPacket.Reset();

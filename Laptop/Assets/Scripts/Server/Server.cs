@@ -118,7 +118,10 @@ public class Server
                         }
                     }
                     if (client != null)
+                    {
+                        Debug.Log("Sending via TCP to: " + client.player.IP);
                         ServerSend.AddLoop(client.id, audio);
+                    }
                 }
             });
             // Save the loop server side as well, for if someone joins after loops are recorded.
