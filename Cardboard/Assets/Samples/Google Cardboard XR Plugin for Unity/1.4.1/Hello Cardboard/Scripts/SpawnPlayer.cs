@@ -82,8 +82,8 @@ public class SpawnPlayer : MonoBehaviour
 
                 if (firstPlayer)
                 {
-                    Camera.main.gameObject.SetActive(false);
                     spawnPointCameras[indexOfPlayerID].SetActive(true);
+                    Camera.main.gameObject.SetActive(false);
                     firstPlayer = false;
                 }
                 break;
