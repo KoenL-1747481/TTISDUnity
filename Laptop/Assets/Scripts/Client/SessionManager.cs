@@ -79,6 +79,7 @@ public class SessionManager : MonoBehaviour
             float[] audio = new float[length];
             Array.Copy(receive_buffer, 0, audio, 0, length);
             AudioHandler.AddLoop(audio);
+            ClientSend.LoopReceived();
         });
     }
 

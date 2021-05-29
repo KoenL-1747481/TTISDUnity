@@ -28,6 +28,7 @@ public enum ClientPackets
     loopRecordRequest,
     sendLoopRequest,
     undoLoopRequest,
+    loopReceived,
 }
 
 public class Packet : IDisposable

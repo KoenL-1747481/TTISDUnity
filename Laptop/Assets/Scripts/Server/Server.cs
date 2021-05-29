@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
+using TTISDProject;
 using UnityEngine;
 
 public class Server
@@ -24,7 +25,11 @@ public class Server
     private static int Bars = DEFAULT_BARS;
     private static ServerClient RecordingPlayer = null;
     private static System.Timers.Timer RecordTimeoutTimer = null;
+    private static int AddLoopAcks = 0;
+    private static int AmountLoopsRecorded = 0;
     private static bool UndoAllowed = true;
+    private static object undo_lock = new object();
+    private static object add_ack_lock = new object();
 
     /// <summary>Starts the server.</summary>
     public static void Start()
@@ -44,17 +49,33 @@ public class Server
 
     public static void OnUndoLoopRequest()
     {
-        if (UndoAllowed)
-        {
-            ServerSend.UndoLoop();
-            UndoAllowed = false;
-            var resetTimer = new System.Timers.Timer(5000);
-            resetTimer.Elapsed += (a, b) =>
+        lock (undo_lock) {
+            // Count amount of laptops
+            int amount_laptops = 0;
+            foreach (ServerClient c in clients.Values)
             {
-                UndoAllowed = true;
-            };
-            resetTimer.AutoReset = false;
-            resetTimer.Start();
+                if (c.player != null && c.player.instrumentType == null)
+                    amount_laptops++;
+            }
+            if (AddLoopAcks > amount_laptops && UndoAllowed)
+            { // Undo loop
+                AddLoopAcks = 0;
+                UndoAllowed = false;
+                AmountLoopsRecorded--;
+                if (AmountLoopsRecorded > 0)
+                    AddLoopAcks = amount_laptops;
+
+                ServerSend.UndoLoop();
+
+                // Debounce so no 2 undo's at the same time cause destruction
+                var resetTimer = new System.Timers.Timer(5000);
+                resetTimer.Elapsed += (a, b) =>
+                {
+                    UndoAllowed = true; 
+                };
+                resetTimer.AutoReset = false;
+                resetTimer.Start();
+            }
         }
     }
 
@@ -71,6 +92,7 @@ public class Server
         {
             Debug.Log("Recording is allowed.");
             RecordingPlayer = clients[clientId];
+            AmountLoopsRecorded++;
             // Send loop record response to the requester
             ServerSend.LoopRecordResponse(clientId, true, "OK", BPM, Bars);
             // Send loop record started to everyone but the requester
@@ -90,6 +112,14 @@ public class Server
         }
     }
 
+    public static void OnAddLoopAck()
+    {
+        lock (add_ack_lock)
+        {
+            AddLoopAcks++;
+        }
+    }
+
     public static void OnSendLoopRequest(int clientId, float[] audio) 
     {
         if (clientId == RecordingPlayer.id)
@@ -106,24 +136,25 @@ public class Server
             ThreadPool.QueueUserWorkItem((a) =>
             {
                 ServerSend.AddLoopUDP(clientId, audio);
-                if (clients[clientId].player.IP != Constants.SERVER_IP)
+            });
+            if (clients[clientId].player.IP != Constants.SERVER_IP)
+            {
+                // Get client who is also server
+                ServerClient client = null;
+                foreach (ServerClient c in clients.Values)
                 {
-                    // Get client who is also server
-                    ServerClient client = null;
-                    foreach (ServerClient c in clients.Values)
+                    if (c.player != null && c.player.IP == Constants.SERVER_IP && c.player.instrumentType == null)
                     {
-                        if (c.player != null && c.player.IP == Constants.SERVER_IP && c.player.instrumentType == null)
-                        {
-                            client = c;
-                        }
-                    }
-                    if (client != null)
-                    {
-                        Debug.Log("Sending via TCP to: " + client.player.IP);
-                        ServerSend.AddLoop(client.id, audio);
+                        client = c;
                     }
                 }
-            });
+                if (client != null)
+                {
+                    Debug.Log("Calling client code from server.");
+                    AudioHandler.AddLoop(audio); // Just call client code directly lol
+                    AddLoopAcks++;
+                }
+            }
             // Save the loop server side as well, for if someone joins after loops are recorded.
             // TODO: doesn't matter atm lel
         }
@@ -245,6 +276,7 @@ public class Server
                 { (int)ClientPackets.loopRecordRequest, ServerHandle.LoopRecordRequest},
                 { (int)ClientPackets.sendLoopRequest, ServerHandle.SendLoopRequest},
                 { (int)ClientPackets.undoLoopRequest, ServerHandle.UndoLoopRequest},
+                { (int)ClientPackets.loopReceived, ServerHandle.LoopReceived},
             };
         Debug.Log("Initialized packets.");
     }

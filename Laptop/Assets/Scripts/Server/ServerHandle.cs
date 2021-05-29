@@ -49,4 +49,9 @@ public class ServerHandle
     {
         Server.OnUndoLoopRequest();
     }
+
+    public static void LoopReceived(int _fromClient, Packet _packet)
+    {
+        Server.OnAddLoopAck();
+    }
 }

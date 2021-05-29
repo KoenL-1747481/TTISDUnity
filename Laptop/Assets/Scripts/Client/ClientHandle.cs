@@ -75,6 +75,7 @@ public class ClientHandle : MonoBehaviour
         if (OK)
         {
             AudioHandler.AddLoop(LoopRecorder.recorded_audio);
+            ClientSend.LoopReceived();
         } else
         {
             string msg = _packet.ReadString();

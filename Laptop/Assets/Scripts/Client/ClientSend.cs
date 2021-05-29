@@ -103,7 +103,14 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-
+    public static void LoopReceived()
+    {
+        Debug.Log("Sending LoopReceived...");
+        using (Packet _packet = new Packet((int)ClientPackets.loopReceived))
+        {
+            SendTCPDataToServer(_packet);
+        }
+    }
 
     #endregion
 }
