@@ -3,6 +3,7 @@ using UnityEngine;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
+using System.Threading;
 
 namespace TTISDProject
 {
@@ -17,7 +18,6 @@ namespace TTISDProject
         private static readonly WaveFormat SAMPLE_FORMAT = WaveFormat.CreateIeeeFloatWaveFormat(SAMPLE_RATE, OUTPUT_CHANNELS);
 
         private static bool allowPlayerAudio = false;
-        private static bool initialized = false;
 
         private static AsioOut AsioDriver;
         private static Dictionary<int, BufferedSampleProvider> PlayerAudio = new Dictionary<int, BufferedSampleProvider>();
@@ -33,6 +33,7 @@ namespace TTISDProject
         private static float[] float_buffer = new float[1024 * 16];
 
         private static MixingSampleProvider Mixer;
+        private static FileWriteProvider AudioWriter;
 
         private static MixingSampleProvider LoopMixer;
         private static VolumeSampleProvider LoopVolumeChanger;
@@ -81,17 +82,30 @@ namespace TTISDProject
             {
                 b.ClearBuffer();
             }
+            AudioWriter?.Dispose();
+            
         }
         public static void SetAsio(string driverName)
         {
             Dispose();
 
+            var uselessProvider = new VolumeSampleProvider(Mixer);
+
             /* Init AsioOut for recording and playback */
+            IWaveProvider asioProvider;
+            if (Constants.DO_AUDIO_WRITE)
+            {
+                AudioWriter = new FileWriteProvider(Mixer, "trace.wav", SAMPLE_FORMAT);
+                asioProvider = AudioWriter.ToWaveProvider16();
+            } else
+            {
+                asioProvider = Mixer.ToWaveProvider16();
+            }
             AsioDriver = new AsioOut(driverName);
             AsioDriver.AudioAvailable += OnAsioOutAudioAvailable;
-            AsioDriver.InitRecordAndPlayback(Mixer.ToWaveProvider16(), INPUT_CHANNELS, SAMPLE_RATE);
+            AsioDriver.InitRecordAndPlayback(asioProvider, INPUT_CHANNELS, SAMPLE_RATE);
             AsioDriver.Play();
-            
+ 
             allowPlayerAudio = true;
         }
 

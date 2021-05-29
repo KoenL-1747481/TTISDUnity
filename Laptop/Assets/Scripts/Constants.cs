@@ -12,6 +12,7 @@ public class Constants
     public const int CARDBOARD_PORT = 25567;
     public const string SERVER_IP = "84.193.179.2";
     public const int DATA_BUFFER_SIZE = 4096;
+    public const bool DO_AUDIO_WRITE = true;
 
     private static readonly string LOCAL_IP_KOEN = "192.168.0.68";
     private static readonly string LOCAL_IP_JEFFREY = "192.168.0.212";
