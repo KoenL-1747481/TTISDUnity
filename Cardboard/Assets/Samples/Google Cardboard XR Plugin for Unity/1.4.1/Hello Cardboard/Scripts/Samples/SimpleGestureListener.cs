@@ -16,8 +16,8 @@ public class SimpleGestureListener : MonoBehaviour, KinectGestures.GestureListen
 		// as an example - detect these user specific gestures
 		KinectManager manager = KinectManager.Instance;
 
-		manager.DetectGesture(userId, KinectGestures.Gestures.Jump);
-		manager.DetectGesture(userId, KinectGestures.Gestures.Squat);
+//		manager.DetectGesture(userId, KinectGestures.Gestures.Jump);
+//		manager.DetectGesture(userId, KinectGestures.Gestures.Squat);
 
 //		manager.DetectGesture(userId, KinectGestures.Gestures.Push);
 //		manager.DetectGesture(userId, KinectGestures.Gestures.Pull);

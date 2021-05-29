@@ -16,8 +16,8 @@ public class SimpleGestureListener : MonoBehaviour, KinectGestures.GestureListen
 		// as an example - detect these user specific gestures
 		KinectManager manager = KinectManager.Instance;
 
-		manager.DetectGesture(userId, KinectGestures.Gestures.Jump);
-		manager.DetectGesture(userId, KinectGestures.Gestures.Squat);
+		//		manager.DetectGesture(userId, KinectGestures.Gestures.Jump);
+		//		manager.DetectGesture(userId, KinectGestures.Gestures.Squat);
 
 		//		manager.DetectGesture(userId, KinectGestures.Gestures.Push);
 		//		manager.DetectGesture(userId, KinectGestures.Gestures.Pull);
@@ -77,7 +77,7 @@ public class SimpleGestureListener : MonoBehaviour, KinectGestures.GestureListen
 
 		if (gesture == KinectGestures.Gestures.RaiseRightHand) //start recording
 			SessionManager.instance.TryRecordLoop();
-		else if (gesture == KinectGestures.Gestures.SwipeRight) //undo recording
+		else if (gesture == KinectGestures.Gestures.RaiseLeftHand) //undo recording
 			SessionManager.instance.UndoLoop();
 
 		print(sGestureText);
