@@ -57,7 +57,7 @@ public class Server
                 if (c.player != null && c.player.instrumentType == null)
                     amount_laptops++;
             }
-            if (AddLoopAcks > amount_laptops && UndoAllowed)
+            if (AddLoopAcks >= amount_laptops && UndoAllowed)
             { // Undo loop
                 AddLoopAcks = 0;
                 UndoAllowed = false;
