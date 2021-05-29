@@ -129,6 +129,7 @@ public class Server
             /*RecordTimeoutTimer?.Stop();
             RecordTimeoutTimer?.Close();*/
 
+            AddLoopAcks = 0;
             
             // Send response to the requester
             ServerSend.SendLoopResponse(clientId, true, "OK");
