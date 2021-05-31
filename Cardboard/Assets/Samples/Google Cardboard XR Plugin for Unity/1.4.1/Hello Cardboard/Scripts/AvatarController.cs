@@ -84,6 +84,7 @@ public class AvatarController : MonoBehaviour
 		// Get initial bone rotations
 		GetInitialRotations();
 		initialRot = transform.rotation;
+		print(initialRotation);
 	}
 	
 	// Update the avatar each frame.
@@ -192,15 +193,16 @@ public class AvatarController : MonoBehaviour
 
 			if (boneIndex2JointMap.ContainsKey(boneIndex))
 			{
-				if (boneIndex != 0)
 				bones[boneIndex].rotation = newBoneRotations[boneIndex];
 			}
 		}
+		bones[0].rotation = Quaternion.Euler(Vector3.zero);
 		transform.rotation = initialRot;
 	}
     private void LateUpdate()
     {
 		transform.rotation = initialRot;
+		bones[0].rotation = Quaternion.Euler(Vector3.zero);
 	}
 
 

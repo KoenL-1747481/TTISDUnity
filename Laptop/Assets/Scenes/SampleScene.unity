@@ -272,7 +272,7 @@ MonoBehaviour:
   verticalMovement: 0
   smoothFactor: 5
   offsetRelativeToSensor: 0
-  HipCenter: {fileID: 0}
+  HipCenter: {fileID: 6979289917603598918}
   Spine: {fileID: 7256304936243175893}
   Neck: {fileID: 8173458510550501675}
   Head: {fileID: 8856235244906422353}
