@@ -249,7 +249,7 @@ public class KinectGestures
 							
 					case 1:  // gesture complete
 						bool isInPose = jointsTracked[rightHandIndex] && jointsTracked[rightShoulderIndex] &&
-							(jointsPos[rightHandIndex].y - jointsPos[rightShoulderIndex].y) > 0.3f;
+							(jointsPos[rightHandIndex].y - jointsPos[rightShoulderIndex].y) > 0.25f;
 
 						Vector3 jointPos = jointsPos[gestureData.joint];
 						CheckPoseComplete(ref gestureData, timestamp, jointPos, isInPose, KinectWrapper.Constants.PoseCompleteDuration);
@@ -271,7 +271,7 @@ public class KinectGestures
 							
 					case 1:  // gesture complete
 						bool isInPose = jointsTracked[leftHandIndex] && jointsTracked[leftShoulderIndex] &&
-							(jointsPos[leftHandIndex].y - jointsPos[leftShoulderIndex].y) > 0.3f;
+							(jointsPos[leftHandIndex].y - jointsPos[leftShoulderIndex].y) > 0.25f;
 
 						Vector3 jointPos = jointsPos[gestureData.joint];
 						CheckPoseComplete(ref gestureData, timestamp, jointPos, isInPose, KinectWrapper.Constants.PoseCompleteDuration);
