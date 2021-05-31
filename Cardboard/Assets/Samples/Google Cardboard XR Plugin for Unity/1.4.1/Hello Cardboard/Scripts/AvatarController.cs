@@ -50,7 +50,7 @@ public class AvatarController : MonoBehaviour
 
 	// private instance of the KinectManager
 	protected KinectManager kinectManager;
-
+	private Quaternion initialRot;
 
 	// transform caching gives performance boost since Unity calls GetComponent<Transform>() each time you call transform 
 	private Transform _transformCache;
@@ -83,6 +83,7 @@ public class AvatarController : MonoBehaviour
 
 		// Get initial bone rotations
 		GetInitialRotations();
+		initialRot = transform.rotation;
 	}
 	
 	// Update the avatar each frame.
@@ -195,12 +196,16 @@ public class AvatarController : MonoBehaviour
 				bones[boneIndex].rotation = newBoneRotations[boneIndex];
 			}
 		}
+		transform.rotation = initialRot;
+	}
+    private void LateUpdate()
+    {
+		transform.rotation = initialRot;
 	}
 
 
-	
-	// Apply the rotations tracked by kinect to the joints.
-	protected void TransformBone(uint userId, KinectWrapper.NuiSkeletonPositionIndex joint, int boneIndex, bool flip)
+    // Apply the rotations tracked by kinect to the joints.
+    protected void TransformBone(uint userId, KinectWrapper.NuiSkeletonPositionIndex joint, int boneIndex, bool flip)
     {
 		Transform boneTransform = bones[boneIndex];
 		if(boneTransform == null || kinectManager == null)
