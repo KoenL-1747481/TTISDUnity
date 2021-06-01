@@ -42,7 +42,6 @@ public class ClientHandle : MonoBehaviour
         double clickInterval = (1.0 / (BPM / 60.0)) * 1000.0;
         double timeoutInterval = clickInterval * 4.0 * (bars + 1);
 
-        // TODO: de nieuwe gui
         FindObjectOfType<Record>().StartedRecording(cardboardId, clickInterval, timeoutInterval, bars);
     }
 

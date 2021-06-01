@@ -31,9 +31,7 @@ public class SpawnPlayer : MonoBehaviour
     }
 
     public void addNewPlayer(int playerID, string instrumentName)
-    {
-        print("KEERERERREEREL IK ZIT IN DE ADD NEW PLAYER");
-        
+    { 
         //print(playerIDs.Count);
         ThreadManager.ExecuteOnMainThread(() => {
             playerIDs.Add(playerID);

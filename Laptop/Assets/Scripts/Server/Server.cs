@@ -157,7 +157,7 @@ public class Server
                 }
             }
             // Save the loop server side as well, for if someone joins after loops are recorded.
-            // TODO: doesn't matter atm lel
+            // TODO: doesn't matter atm 
         }
         else
         {

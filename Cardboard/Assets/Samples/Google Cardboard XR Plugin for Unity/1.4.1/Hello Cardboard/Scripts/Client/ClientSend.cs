@@ -29,7 +29,7 @@ public class ClientSend : MonoBehaviour
         {
             _packet.Write(SessionManager.clientServer.myId);
             _packet.Write("Sample Username"); // Not implemented kek
-            _packet.Write(SessionManager.MyInstrument);
+            _packet.Write("Electric Guitar");//_packet.Write(SessionManager.MyInstrument);
 
             SendTCPDataToServer(_packet);
         }

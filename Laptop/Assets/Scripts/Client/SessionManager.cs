@@ -73,8 +73,7 @@ public class SessionManager : MonoBehaviour
         buffer_pos = 0;
         ThreadPool.QueueUserWorkItem((a) =>
         {
-            while (AudioHandler.GetLoopLength() == 0)
-                Debug.Log("DIGGEMA!");
+            while (AudioHandler.GetLoopLength() == 0) ;
             Debug.Log("Ended adding loop. Received length: " + length);
             float[] audio = new float[length];
             Array.Copy(receive_buffer, 0, audio, 0, length);
